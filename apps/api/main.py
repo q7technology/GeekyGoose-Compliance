@@ -19,6 +19,16 @@ from init_db import initialize_database
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def _safe_json_loads(json_str: Optional[str], default=None):
+    """Safely parse JSON string, returning default value if parsing fails."""
+    if not json_str:
+        return default
+    try:
+        return json.loads(json_str)
+    except (json.JSONDecodeError, TypeError):
+        logger.warning(f"Failed to parse JSON: {json_str[:50]}...")
+        return default
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
@@ -429,8 +439,8 @@ async def get_scan_status(scan_id: str, db: Session = Depends(get_db)):
                 },
                 "outcome": result.outcome,
                 "confidence": result.confidence,
-                "rationale": json.loads(result.rationale_json) if result.rationale_json else None,
-                "citations": json.loads(result.citations_json) if result.citations_json else []
+                "rationale": _safe_json_loads(result.rationale_json),
+                "citations": _safe_json_loads(result.citations_json, default=[])
             }
             for result in results
         ],
@@ -442,7 +452,7 @@ async def get_scan_status(scan_id: str, db: Session = Depends(get_db)):
                     "text": gap.requirement.text
                 },
                 "summary": gap.gap_summary,
-                "recommended_actions": json.loads(gap.recommended_actions_json) if gap.recommended_actions_json else []
+                "recommended_actions": _safe_json_loads(gap.recommended_actions_json, default=[])
             }
             for gap in gaps
         ]
