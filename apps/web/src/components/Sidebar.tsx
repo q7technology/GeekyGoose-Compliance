@@ -8,6 +8,8 @@ const navigation = [
   { name: 'Dashboard', href: '/', icon: '🏠' },
   { name: 'Documents', href: '/documents', icon: '📁' },
   { name: 'Controls', href: '/controls', icon: '⚙️' },
+  { name: 'Templates', href: '/templates', icon: '📋' },
+  { name: 'Submissions', href: '/submissions', icon: '📄' },
   { name: 'Reports', href: '/reports', icon: '📊' },
   { name: 'Settings', href: '/settings', icon: '🔧' },
 ];

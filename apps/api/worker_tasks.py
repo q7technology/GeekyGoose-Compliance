@@ -124,23 +124,50 @@ def process_scan(self, scan_id: str):
         
         # Store scan results
         for result in scan_results["requirements"]:
+            # Ensure data is properly serialized to JSON strings
+            rationale_json = result.get("rationale", "")
+            if isinstance(rationale_json, (list, dict)):
+                rationale_json = json.dumps(rationale_json)
+            elif not isinstance(rationale_json, str):
+                rationale_json = str(rationale_json)
+            
+            citations_json = result.get("citations", [])
+            if isinstance(citations_json, (list, dict)):
+                citations_json = json.dumps(citations_json)
+            elif not isinstance(citations_json, str):
+                citations_json = json.dumps([])
+            
             scan_result = ScanResult(
                 scan_id=scan.id,
                 requirement_id=result["requirement_id"],
                 outcome=result["outcome"],
                 confidence=str(result["confidence"]),
-                rationale_json=json.dumps(result["rationale"]),
-                citations_json=json.dumps(result["citations"])
+                rationale_json=rationale_json,
+                citations_json=citations_json
             )
             db.add(scan_result)
         
         # Store gaps
         for gap in scan_results["gaps"]:
+            # Ensure recommended_actions is properly serialized
+            recommended_actions = gap.get("recommended_actions", [])
+            if isinstance(recommended_actions, (list, dict)):
+                recommended_actions_json = json.dumps(recommended_actions)
+            elif isinstance(recommended_actions, str):
+                # Try to parse and re-serialize to ensure valid JSON
+                try:
+                    parsed = json.loads(recommended_actions)
+                    recommended_actions_json = json.dumps(parsed)
+                except json.JSONDecodeError:
+                    recommended_actions_json = json.dumps([])
+            else:
+                recommended_actions_json = json.dumps([])
+            
             gap_record = Gap(
                 scan_id=scan.id,
                 requirement_id=gap["requirement_id"],
                 gap_summary=gap["summary"],
-                recommended_actions_json=json.dumps(gap["recommended_actions"])
+                recommended_actions_json=recommended_actions_json
             )
             db.add(gap_record)
         

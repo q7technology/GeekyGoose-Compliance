@@ -35,9 +35,18 @@
 - **Multi-Format Support**: PDF, DOCX, TXT, PNG, JPG with OCR capabilities
 - **Audit Trail**: Complete history of document uploads and changes
 
+### 📋 **Control Templates & Policy Generation**
+- **Template Creation**: Create reusable templates for compliance controls
+- **Company Information**: Customizable fields for company-specific data collection
+- **Evidence Requirements**: Define what evidence is needed for each control
+- **Template Filling**: Streamlined process for users to complete compliance documentation
+- **Policy Generation**: Download completed policies as professional Word documents
+- **Submission Management**: View, download, and delete completed template submissions
+- **Submission Tracking**: Monitor template submissions and approval status
+
 ## 🏗️ Architecture
 
-### **Frontend** (Next.js 14)
+### **Frontend** (Next.js 15)
 - **App Router**: Modern Next.js routing with TypeScript
 - **Tailwind CSS + shadcn/ui**: Beautiful, accessible components
 - **Server Actions**: Optimized data mutations
@@ -115,6 +124,14 @@ docker-compose exec api python seed_database.py
 3. **Run AI Scan**: Click "Start AI Scan" to analyze evidence against requirements
 4. **Review Results**: See compliance status, gaps, and recommended actions
 5. **Generate Reports**: Export compliance reports for audits and reviews
+
+### 📋 **Using Templates**
+1. **Create Templates**: Go to Templates → Create Template → Define company fields and evidence requirements
+2. **Fill Templates**: Select a template → Fill Template → Enter company information and upload evidence
+3. **Download Policies**: Generate professional Word documents with filled company data
+4. **Manage Submissions**: View completed templates on Submissions page with download and delete options
+5. **Track Submissions**: Monitor template completion status and approval workflow
+6. **Standardize Compliance**: Use templates to ensure consistent documentation across your organization
 
 ### 🔍 **Example Workflow: MFA Compliance**
 1. Upload your MFA policy document (PDF)
@@ -295,6 +312,114 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Custom Frameworks**: Add your industry-specific requirements
 - **Professional Services**: Implementation and training available
 - **SLA Support**: As-IS
+
+## 📅 Changelog
+
+### **v0.2.1** - Enhanced Policy Generation & Submission Management (December 2025)
+
+#### 🆕 **New Features**
+- **Professional Word Document Export**: Download completed policy templates as formatted Word documents
+  - **Filled Company Data**: All company information fields populated automatically in the Word document
+  - **Professional Formatting**: Times New Roman font, proper margins, corporate document structure
+  - **Microsoft Office Compatible**: Full compatibility with Word 2016+ and Office 365
+  - **Signature Sections**: Built-in approval and signature areas for policy documentation
+
+- **Complete Submission Management**: Comprehensive interface for managing completed templates
+  - **📄 Download Word**: Download any completed submission as a formatted policy document
+  - **🗑️ Delete Submissions**: Remove old or unwanted template submissions with confirmation
+  - **Submission History**: View all completed templates with company details and validation status
+  - **Persistent Storage**: All submissions saved locally with cross-session persistence
+
+- **Enhanced AI Evidence Validation**: Improved real-time evidence analysis
+  - **Backend API Integration**: New `/api/validate-evidence` endpoint for file analysis
+  - **File Type Intelligence**: Smart validation based on evidence type (policy, configuration, screenshot)
+  - **Enhanced Feedback**: Detailed findings and recommendations based on file content and format
+  - **Fallback Processing**: Graceful handling when AI services are unavailable
+
+#### 🔧 **Technical Improvements**
+- **Next.js 15**: Updated to latest Next.js version for improved performance
+- **Import Path Fixes**: Resolved module resolution issues across the application
+- **JSON Serialization**: Fixed backend API JSON handling for reliable data processing
+- **Error Handling**: Enhanced error handling for file uploads and API interactions
+- **TypeScript Improvements**: Better type safety for template and submission interfaces
+
+#### 🎨 **UI/UX Enhancements**
+- **Action Buttons**: Clear download and delete actions on each submission
+- **Visual Status Indicators**: Color-coded validation results with tooltips
+- **Responsive Design**: Mobile-optimized submission management interface
+- **Confirmation Dialogs**: User-friendly confirmation for destructive actions
+- **Progress Feedback**: Real-time feedback during document generation and AI validation
+
+#### 🐛 **Bug Fixes**
+- Fixed template data not appearing in downloaded Word documents
+- Resolved import path errors preventing build compilation
+- Fixed AI validation not working with actual file uploads
+- Corrected JSON parsing errors in backend API responses
+- Resolved submission storage and retrieval issues
+
+### **v0.2.0** - Template System & AI Validation (December 2025)
+
+#### 🆕 **New Features**
+- **Control Templates System**: Create reusable templates for compliance controls
+  - Customizable company information fields (text, textarea, select, file inputs)
+  - Evidence requirements definition with AI validation prompts
+  - Template filling interface with real-time validation
+  - Submission tracking and approval workflow
+
+- **Essential Eight Templates**: Complete policy template system
+  - **All 8 Controls Covered**: EE-1 through EE-8 with comprehensive templates
+  - **Pre-built Templates**: Ready-to-use policy templates for each Essential Eight control
+  - **Company-Specific Fields**: Tailored data collection for organization details
+  - **Evidence Requirements**: Specific evidence types for each control requirement
+
+- **AI-Powered Evidence Validation**: Real-time inspection of uploaded evidence
+  - **Smart Analysis**: Custom AI prompts validate evidence against specific requirements
+  - **Confidence Scoring**: AI provides confidence levels (60-95%) for validation results
+  - **Detailed Findings**: Specific feedback on what was found in evidence documents
+  - **Actionable Recommendations**: AI suggests improvements for better compliance
+  - **Visual Feedback**: Color-coded status indicators (Passed/Warning/Failed)
+
+#### 🔧 **Technical Improvements**
+- **Navigation Enhancement**: Added Templates to sidebar navigation
+- **Data Persistence**: Templates stored in localStorage with proper state management
+- **Template Generation**: One-click generation from Essential Eight controls
+- **Duplicate Prevention**: Prevents creating multiple templates for the same control
+- **Form Validation**: Comprehensive validation for template fields and evidence uploads
+
+#### 🎨 **UI/UX Enhancements**
+- **Essential Eight Section**: Dedicated page for browsing and generating Essential Eight templates
+- **Template Preview**: View template structure before generation
+- **Progress Indicators**: Real-time feedback during AI validation
+- **Responsive Design**: Mobile-friendly template forms and validation displays
+- **Loading States**: Proper loading indicators for AI processing
+
+#### 📋 **Essential Eight Controls Implemented**
+1. **EE-1**: Application Control - Prevent unauthorized application execution
+2. **EE-2**: Patch Applications - Timely application security patching
+3. **EE-3**: Configure Microsoft Office Macro Settings - Macro security controls
+4. **EE-4**: User Application Hardening - Browser and application security
+5. **EE-5**: Restrict Administrative Privileges - Privilege management
+6. **EE-6**: Patch Operating Systems - OS security patching
+7. **EE-7**: Multi-Factor Authentication - MFA for all users
+8. **EE-8**: Regular Backups - Data backup and recovery procedures
+
+#### 🤖 **AI Validation Examples**
+- **Policy Documents**: Verifies presence of required sections, roles, procedures
+- **Configuration Files**: Checks for proper security settings and controls
+- **Reports**: Validates compliance metrics and evidence completeness
+- **Screenshots**: Analyzes visual evidence for configuration verification
+
+#### 💾 **Data Management**
+- **Template Storage**: Browser-based persistence using localStorage
+- **Cross-Session**: Templates persist between browser sessions
+- **Template Sharing**: Foundation for future multi-user template sharing
+
+### **v0.1.0** - Initial Release
+- Core compliance management functionality
+- Document upload and evidence linking
+- AI scanning capabilities for compliance analysis
+- Essential Eight framework support
+- Basic reporting and gap analysis
 
 ---
 

@@ -19,15 +19,28 @@ from init_db import initialize_database
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def _safe_json_loads(json_str: Optional[str], default=None):
-    """Safely parse JSON string, returning default value if parsing fails."""
-    if not json_str:
+def _safe_json_loads(json_data, default=None):
+    """Safely parse JSON data, returning default value if parsing fails."""
+    if json_data is None:
         return default
-    try:
-        return json.loads(json_str)
-    except (json.JSONDecodeError, TypeError) as e:
-        logger.warning(f"Invalid JSON data in database - returning default. Content: {json_str[:100]}... Error: {e}")
-        return default
+    
+    # If it's already a Python object (list, dict), return it directly
+    if isinstance(json_data, (list, dict)):
+        return json_data
+    
+    # If it's a string, try to parse as JSON
+    if isinstance(json_data, str):
+        if not json_data.strip():
+            return default
+        try:
+            return json.loads(json_data)
+        except json.JSONDecodeError as e:
+            logger.warning(f"Invalid JSON string in database - returning default. Content: {json_data[:100]}... Error: {e}")
+            return default
+    
+    # For any other type, log and return default
+    logger.warning(f"Unexpected data type in database - returning default. Type: {type(json_data)}, Content: {str(json_data)[:100]}...")
+    return default
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
