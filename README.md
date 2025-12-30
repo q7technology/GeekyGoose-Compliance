@@ -104,11 +104,11 @@ docker-compose ps
 
 ### 4. Initialize Database
 ```bash
-# Run database migrations
-docker-compose exec api python create_tables.py
+# Run database initialization and create tables
+docker-compose exec api python init_db.py
 
 # Seed with Essential Eight framework
-docker-compose exec api python seed_database.py
+docker-compose exec api python run_seed.py
 ```
 
 ### 5. Access Application
@@ -180,16 +180,13 @@ celery -A celery_app worker --loglevel=info
 
 ### **Testing**
 ```bash
-# Run all tests
-docker-compose exec api python -m pytest
-
-# Frontend tests
-cd apps/web
-npm test
-
-# API tests
+# API scanner tests
 cd apps/api
 python test_scanner.py
+
+# Frontend tests (if available)
+cd apps/web
+npm test
 ```
 
 ### **Database Migrations**
@@ -302,9 +299,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### **Documentation**
 - **API Docs**: http://localhost:8000/docs
-- **User Guide**: [docs/user-guide.md](docs/user-guide.md)
-- **Admin Guide**: [docs/admin-guide.md](docs/admin-guide.md)
-- **Developer Guide**: [docs/developer-guide.md](docs/developer-guide.md)
+- **Setup Guide**: [SETUP.md](SETUP.md)
+- **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Network Architecture**: [docs/NETWORK_ARCHITECTURE.md](docs/NETWORK_ARCHITECTURE.md)
 
 
 ### **Commercial Support**
