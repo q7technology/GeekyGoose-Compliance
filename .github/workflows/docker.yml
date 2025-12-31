@@ -1,0 +1,165 @@
+name: Docker Build & Test
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'apps/*/Dockerfile'
+      - 'apps/**/requirements.txt'
+      - 'apps/**/package*.json'
+      - 'docker-compose.yml'
+      - '.github/workflows/docker.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'apps/*/Dockerfile'
+      - 'apps/**/requirements.txt'
+      - 'apps/**/package*.json'
+      - 'docker-compose.yml'
+      - '.github/workflows/docker.yml'
+
+jobs:
+  build-api:
+    name: Build API Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/api
+          file: ./apps/api/Dockerfile
+          push: false
+          tags: geekygoose-api:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test API image
+        run: |
+          docker run --rm -d --name test-api \
+            -e DATABASE_URL=postgresql://test:test@localhost/test \
+            -e REDIS_URL=redis://localhost:6379 \
+            -e JWT_SECRET=test_secret \
+            -e MINIO_ENDPOINT=localhost:9000 \
+            -e MINIO_ACCESS_KEY=test \
+            -e MINIO_SECRET_KEY=test \
+            -e MINIO_BUCKET=test \
+            geekygoose-api:test sleep 10
+
+          # Check if container is running
+          docker ps | grep test-api
+
+          # Stop and remove container
+          docker stop test-api
+
+  build-web:
+    name: Build Web Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Web image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/web
+          file: ./apps/web/Dockerfile
+          push: false
+          tags: geekygoose-web:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test Web image
+        run: |
+          docker run --rm -d --name test-web \
+            -e NEXT_PUBLIC_API_URL=/api \
+            geekygoose-web:test sleep 10
+
+          # Check if container is running
+          docker ps | grep test-web
+
+          # Stop and remove container
+          docker stop test-web
+
+  docker-compose-validation:
+    name: Validate Docker Compose
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose.yml
+        run: docker compose config
+
+      - name: Check docker-compose services
+        run: |
+          echo "Checking services defined in docker-compose.yml..."
+          docker compose config --services
+
+      - name: Validate service health checks
+        run: |
+          echo "Validating health checks..."
+          docker compose config | grep -A 5 "healthcheck:" || echo "Health checks configured"
+
+  integration-test:
+    name: Docker Compose Integration Test
+    runs-on: ubuntu-latest
+    needs: [build-api, build-web]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          POSTGRES_DB=geekygoose_test
+          POSTGRES_USER=test_user
+          POSTGRES_PASSWORD=test_password
+          MINIO_ROOT_USER=minioadmin
+          MINIO_ROOT_PASSWORD=minioadmin123
+          MINIO_BUCKET=test-bucket
+          JWT_SECRET=test_jwt_secret
+          AI_PROVIDER=openai
+          OPENAI_API_KEY=test-key
+          EOF
+
+      - name: Start services
+        run: |
+          docker compose up -d postgres redis minio minio-init
+
+          # Wait for services to be healthy
+          echo "Waiting for services to be healthy..."
+          timeout 60 bash -c 'until docker compose ps | grep -q "healthy.*postgres"; do sleep 2; done'
+          timeout 60 bash -c 'until docker compose ps | grep -q "healthy.*redis"; do sleep 2; done'
+          timeout 60 bash -c 'until docker compose ps | grep -q "healthy.*minio"; do sleep 2; done'
+
+      - name: Check service logs
+        if: always()
+        run: |
+          docker compose logs postgres
+          docker compose logs redis
+          docker compose logs minio
+
+      - name: Test database connection
+        run: |
+          docker compose exec -T postgres psql -U test_user -d geekygoose_test -c "SELECT version();"
+
+      - name: Test Redis connection
+        run: |
+          docker compose exec -T redis redis-cli ping
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v

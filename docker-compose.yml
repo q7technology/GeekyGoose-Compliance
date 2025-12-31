@@ -1,43 +1,48 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15-alpine
     container_name: geekygoose-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: geekygoose
-      POSTGRES_USER: geekygoose
-      POSTGRES_PASSWORD: dev_password_123
-    # No external ports - only accessible from internal network
+      POSTGRES_DB: ${POSTGRES_DB:-geekygoose}
+      POSTGRES_USER: ${POSTGRES_USER:-geekygoose}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev_password_123}
     expose:
       - "5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/init:/docker-entrypoint-initdb.d
+      - ./database/init:/docker-entrypoint-initdb.d:ro
     networks:
       - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-geekygoose} -d ${POSTGRES_DB:-geekygoose}"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
 
   redis:
     image: redis:7-alpine
     container_name: geekygoose-redis
     restart: unless-stopped
-    # No external ports - only accessible from internal network
     expose:
       - "6379"
     volumes:
       - redis_data:/data
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
 
   minio:
     image: minio/minio:latest
     container_name: geekygoose-minio
     restart: unless-stopped
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin123
-    # No external ports - only accessible from internal network
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
     expose:
       - "9000"
       - "9001"
@@ -46,6 +51,52 @@ services:
     command: server /data --console-address ":9001"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD-SHELL", "mc ready local || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  # Auto-create MinIO bucket on startup
+  minio-init:
+    image: minio/mc:latest
+    container_name: geekygoose-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - backend
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set gg http://minio:9000 ${MINIO_ROOT_USER:-minioadmin} ${MINIO_ROOT_PASSWORD:-minioadmin123} &&
+      mc mb -p gg/${MINIO_BUCKET:-geekygoose-docs} || true &&
+      mc anonymous set none gg/${MINIO_BUCKET:-geekygoose-docs} || true
+      "
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      MINIO_BUCKET: ${MINIO_BUCKET:-geekygoose-docs}
+    restart: "no"
+
+  # Optional: Run Ollama as part of the stack (activate with --profile ollama)
+  # Example: docker-compose --profile ollama up -d
+  ollama:
+    image: ollama/ollama:latest
+    container_name: geekygoose-ollama
+    restart: unless-stopped
+    expose:
+      - "11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - backend
+    profiles: ["ollama"]
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   api:
     build:
@@ -54,30 +105,42 @@ services:
     container_name: geekygoose-api
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://geekygoose:dev_password_123@postgres:5432/geekygoose
+      DATABASE_URL: postgresql://${POSTGRES_USER:-geekygoose}:${POSTGRES_PASSWORD:-dev_password_123}@postgres:5432/${POSTGRES_DB:-geekygoose}
       REDIS_URL: redis://redis:6379
       MINIO_ENDPOINT: minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin123
-      MINIO_BUCKET: geekygoose-docs
-      JWT_SECRET: dev_jwt_secret_change_in_production
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      MINIO_BUCKET: ${MINIO_BUCKET:-geekygoose-docs}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
       AI_PROVIDER: ${AI_PROVIDER:-ollama}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      OLLAMA_ENDPOINT: ${OLLAMA_ENDPOINT:-http://localhost:11434}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # If using ollama service: http://ollama:11434
+      # If using host ollama: http://host.docker.internal:11434 (Docker Desktop)
+      OLLAMA_ENDPOINT: ${OLLAMA_ENDPOINT:-http://ollama:11434}
       OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:14b}
       OLLAMA_CONTEXT_SIZE: ${OLLAMA_CONTEXT_SIZE:-32768}
-    # Internal port only - accessible through web service
     expose:
       - "8000"
     depends_on:
-      - postgres
-      - redis
-      - minio
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
     volumes:
       - ./apps/api:/app
     networks:
       - backend
-      - frontend  # Also on frontend network to communicate with web
+      - frontend
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload --timeout-keep-alive 300 --timeout-graceful-shutdown 300
 
   web:
@@ -89,20 +152,26 @@ services:
     environment:
       # Internal API URL for server-side calls
       INTERNAL_API_URL: http://api:8000
-      # Public API URL will be handled by Next.js rewrites
+      # Public API URL will be proxied through Next.js
       NEXT_PUBLIC_API_URL: /api
-      DATABASE_URL: postgresql://geekygoose:dev_password_123@postgres:5432/geekygoose
     ports:
       # Bind to all interfaces (0.0.0.0) for LAN access
       - "0.0.0.0:3000:3000"
     depends_on:
-      - api
+      api:
+        condition: service_started
     volumes:
       - ./apps/web:/app
       - /app/node_modules
       - /app/.next
     networks:
-      - frontend  # Only on frontend network for security
+      - frontend
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     command: npm run dev -- --hostname 0.0.0.0
 
   worker:
@@ -112,38 +181,44 @@ services:
     container_name: geekygoose-worker
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://geekygoose:dev_password_123@postgres:5432/geekygoose
+      DATABASE_URL: postgresql://${POSTGRES_USER:-geekygoose}:${POSTGRES_PASSWORD:-dev_password_123}@postgres:5432/${POSTGRES_DB:-geekygoose}
       REDIS_URL: redis://redis:6379
       MINIO_ENDPOINT: minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin123
-      MINIO_BUCKET: geekygoose-docs
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      MINIO_BUCKET: ${MINIO_BUCKET:-geekygoose-docs}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       AI_PROVIDER: ${AI_PROVIDER:-ollama}
-      OLLAMA_ENDPOINT: ${OLLAMA_ENDPOINT:-http://localhost:11434}
+      OLLAMA_ENDPOINT: ${OLLAMA_ENDPOINT:-http://ollama:11434}
       OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:14b}
       OLLAMA_CONTEXT_SIZE: ${OLLAMA_CONTEXT_SIZE:-32768}
     depends_on:
-      - postgres
-      - redis
-      - minio
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
     volumes:
       - ./apps/api:/app
     networks:
-      - backend  # Only on backend network
+      - backend
     command: celery -A celery_app worker --loglevel=info
 
 volumes:
   postgres_data:
   redis_data:
   minio_data:
+  ollama_data:
 
 networks:
-  # Backend network - internal services only
+  # Backend network - for internal services (DB, Redis, MinIO, Ollama)
+  # Removed 'internal: true' to allow API/worker to reach external services (OpenAI, etc.)
   backend:
     driver: bridge
-    internal: true  # No external access
-  
+
   # Frontend network - for web app to communicate with API
   frontend:
     driver: bridge

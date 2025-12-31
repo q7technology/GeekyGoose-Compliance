@@ -12,6 +12,26 @@
 ![Security](https://img.shields.io/badge/security-enhanced-brightgreen.svg)
 ![Performance](https://img.shields.io/badge/performance-optimized-orange.svg)
 
+## 📸 Screenshots
+
+### Dashboard Overview
+![Dashboard](docs/screenshots/dashboard.png)
+*Comprehensive compliance dashboard with real-time metrics and AI-powered insights*
+
+### AI-Powered Document Analysis
+![AI Analysis](docs/screenshots/ai-analysis.gif)
+*Watch as AI analyzes your compliance documents and maps them to framework controls*
+
+### Compliance Reporting
+![Reports](docs/screenshots/reports.png)
+*Generate detailed compliance reports with gap analysis and remediation recommendations*
+
+### Template Management
+![Templates](docs/screenshots/templates.png)
+*Create and manage reusable compliance templates with AI validation*
+
+> **Note**: Screenshots will be added in the `docs/screenshots/` directory. To contribute screenshots, please see our [Contributing Guide](CONTRIBUTING.md).
+
 ## ✨ Features
 
 ### 🤖 **AI-Powered Compliance Scanning**
@@ -171,8 +191,8 @@ graph TB
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/yourusername/geekygoose-compliance.git
-cd geekygoose-compliance
+git clone https://github.com/q7technology/GeekyGoose-Compliance-Community.git
+cd GeekyGoose-Compliance-Community
 ```
 
 ### 2. Environment Setup
@@ -304,7 +324,6 @@ NEXT_PUBLIC_API_URL=https://api.yourdomain.com
 ### **Performance & Monitoring**
 ```yaml
 # docker-compose.prod.yml example with monitoring
-version: '3.8'
 services:
   api:
     image: geekygoose/api:0.3.0
@@ -571,8 +590,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### **One-Command Production Setup**
 ```bash
 # 1. Clone and configure
-git clone https://github.com/yourusername/geekygoose-compliance.git
-cd geekygoose-compliance
+git clone https://github.com/ggcompli/GeekyGoose-Compliance.git
+cd GeekyGoose-Compliance
 
 # 2. Create production environment (CRITICAL - Change passwords!)
 cp .env.example .env.prod
