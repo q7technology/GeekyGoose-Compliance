@@ -18,6 +18,7 @@ interface Control {
   description: string;
   requirements_count: number;
   created_at: string;
+  framework_name?: string;
 }
 
 interface Template {
@@ -35,6 +36,7 @@ interface Template {
     field_type: 'text' | 'textarea' | 'select' | 'file';
     required: boolean;
     placeholder?: string;
+    description?: string;
     options?: string[];
   }>;
   evidence_requirements: Array<{
@@ -181,10 +183,16 @@ export default function TemplatesPage() {
 
   const createTemplate = async () => {
     try {
+      const foundControl = controls.find(c => c.id === newTemplate.control_id);
       const template: Template = {
         id: Date.now().toString(),
         ...newTemplate,
-        control: controls.find(c => c.id === newTemplate.control_id) || {
+        control: foundControl ? {
+          id: foundControl.id,
+          code: foundControl.code,
+          title: foundControl.title,
+          framework_name: foundControl.framework_name || 'Custom'
+        } : {
           id: newTemplate.control_id,
           code: 'Custom',
           title: 'Custom Control',

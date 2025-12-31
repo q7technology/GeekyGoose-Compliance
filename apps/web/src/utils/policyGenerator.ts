@@ -13,7 +13,7 @@ interface Template {
     field_type: string;
     required: boolean;
     placeholder?: string;
-    description: string;
+    description?: string;
     options?: string[];
   }>;
   evidence_requirements: Array<{

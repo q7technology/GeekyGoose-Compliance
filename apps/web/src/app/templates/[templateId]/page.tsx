@@ -20,6 +20,7 @@ interface Template {
     field_type: 'text' | 'textarea' | 'select' | 'file';
     required: boolean;
     placeholder?: string;
+    description?: string;
     options?: string[];
   }>;
   evidence_requirements: Array<{

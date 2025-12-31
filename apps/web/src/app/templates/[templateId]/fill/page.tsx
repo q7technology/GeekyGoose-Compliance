@@ -20,6 +20,7 @@ interface Template {
     field_type: 'text' | 'textarea' | 'select' | 'file';
     required: boolean;
     placeholder?: string;
+    description?: string;
     options?: string[];
   }>;
   evidence_requirements: Array<{
@@ -79,9 +80,23 @@ export default function FillTemplatePage() {
       if (storedTemplates) {
         const templates = JSON.parse(storedTemplates);
         const foundTemplate = templates.find((t: any) => t.id === templateId);
-        
+
         if (foundTemplate) {
           setTemplate(foundTemplate);
+
+          // Initialize company data with default values
+          const initialData: Record<string, any> = {};
+          foundTemplate.company_fields.forEach((field: any) => {
+            initialData[field.field_name] = '';
+          });
+          setCompanyData(initialData);
+
+          // Initialize evidence uploads
+          const initialEvidenceUploads: Record<string, { file: File | null; note: string }> = {};
+          foundTemplate.evidence_requirements.forEach((req: any) => {
+            initialEvidenceUploads[req.requirement_code] = { file: null, note: '' };
+          });
+          setEvidenceUploads(initialEvidenceUploads);
         } else {
           console.error('Template not found');
           return;
@@ -90,22 +105,6 @@ export default function FillTemplatePage() {
         console.error('No templates found in storage');
         return;
       }
-        
-        if (foundTemplate) {
-          // Initialize company data with default values
-          const initialData: Record<string, any> = {};
-          foundTemplate.company_fields.forEach((field: any) => {
-            initialData[field.field_name] = '';
-          });
-          setCompanyData(initialData);
-          
-          // Initialize evidence uploads
-          const initialEvidenceUploads: Record<string, { file: File | null; note: string }> = {};
-          foundTemplate.evidence_requirements.forEach((req: any) => {
-            initialEvidenceUploads[req.requirement_code] = { file: null, note: '' };
-          });
-          setEvidenceUploads(initialEvidenceUploads);
-        }
       
     } catch (error) {
       console.error('Failed to fetch template:', error);
@@ -172,7 +171,7 @@ export default function FillTemplatePage() {
     }
 
     // Start AI validation if file is uploaded and template supports it
-    if (file && template?.ai_validation_enabled) {
+    if (file && template && (template as any)?.ai_validation_enabled) {
       await validateEvidenceWithAI(requirementCode, file);
     }
   };
@@ -259,7 +258,7 @@ export default function FillTemplatePage() {
   };
 
   const validateEvidenceWithAI = async (requirementCode: string, file: File) => {
-    setValidatingEvidence(prev => new Set([...prev, requirementCode]));
+    setValidatingEvidence(prev => new Set([...Array.from(prev), requirementCode]));
     
     try {
       // Create FormData for file upload

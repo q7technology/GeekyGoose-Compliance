@@ -607,12 +607,12 @@ export default function ReportsPage() {
             <h2 className="text-lg font-semibold text-gray-900">Gaps Analysis & Recommendations</h2>
           </div>
           <div className="p-6">
-            {controls.filter(c => c.latest_scan?.gaps.length > 0).length === 0 ? (
+            {controls.filter(c => c.latest_scan?.gaps?.length && c.latest_scan.gaps.length > 0).length === 0 ? (
               <p className="text-gray-500 text-center py-8">No gaps identified in scanned controls.</p>
             ) : (
               <div className="space-y-6">
                 {controls
-                  .filter(c => c.latest_scan?.gaps.length > 0)
+                  .filter(c => c.latest_scan?.gaps?.length && c.latest_scan.gaps.length > 0)
                   .map((control) => (
                     <div key={control.id} className="border border-gray-200 rounded-lg p-4">
                       <h3 className="text-lg font-medium text-gray-900 mb-3">
