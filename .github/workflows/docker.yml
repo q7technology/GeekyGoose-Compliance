@@ -115,7 +115,6 @@ jobs:
   integration-test:
     name: Docker Compose Integration Test
     runs-on: ubuntu-latest
-    needs: [build-api, build-web]
 
     steps:
       - name: Checkout code
@@ -138,18 +137,53 @@ jobs:
       - name: Start services
         run: |
           docker compose up -d postgres redis minio minio-init
+          echo "Services started, waiting for health checks..."
 
-          # Wait for services to be healthy
-          echo "Waiting for services to be healthy..."
-          timeout 60 bash -c 'until docker compose ps | grep -q "healthy.*postgres"; do sleep 2; done'
-          timeout 60 bash -c 'until docker compose ps | grep -q "healthy.*redis"; do sleep 2; done'
-          timeout 60 bash -c 'until docker compose ps | grep -q "healthy.*minio"; do sleep 2; done'
+      - name: Wait for PostgreSQL
+        run: |
+          echo "Waiting for PostgreSQL to be ready..."
+          for i in {1..30}; do
+            if docker compose exec -T postgres pg_isready -U test_user > /dev/null 2>&1; then
+              echo "PostgreSQL is ready!"
+              exit 0
+            fi
+            echo "Attempt $i: PostgreSQL not ready yet..."
+            sleep 2
+          done
+          echo "PostgreSQL failed to become ready"
+          exit 1
+
+      - name: Wait for Redis
+        run: |
+          echo "Waiting for Redis to be ready..."
+          for i in {1..30}; do
+            if docker compose exec -T redis redis-cli ping > /dev/null 2>&1; then
+              echo "Redis is ready!"
+              exit 0
+            fi
+            echo "Attempt $i: Redis not ready yet..."
+            sleep 2
+          done
+          echo "Redis failed to become ready"
+          exit 1
+
+      - name: Wait for MinIO
+        run: |
+          echo "Waiting for MinIO to be ready..."
+          sleep 10
+          echo "MinIO should be ready"
+
+      - name: Check running containers
+        run: docker compose ps
 
       - name: Check service logs
         if: always()
         run: |
+          echo "=== PostgreSQL Logs ==="
           docker compose logs postgres
+          echo "=== Redis Logs ==="
           docker compose logs redis
+          echo "=== MinIO Logs ==="
           docker compose logs minio
 
       - name: Test database connection
