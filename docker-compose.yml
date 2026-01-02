@@ -180,11 +180,41 @@ services:
       start_period: 60s
     command: npm run dev -- --hostname 0.0.0.0
 
+  # Worker for text extraction and general tasks (multi-threaded)
   worker:
     build:
       context: ./apps/api
       dockerfile: Dockerfile
     container_name: geekygoose-worker
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-geekygoose}:${POSTGRES_PASSWORD:-dev_password_123}@postgres:5432/${POSTGRES_DB:-geekygoose}
+      REDIS_URL: redis://redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      MINIO_BUCKET: ${MINIO_BUCKET:-geekygoose-docs}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./apps/api:/app
+    networks:
+      - backend
+    command: celery -A celery_app worker --loglevel=info --queues=extraction,celery --concurrency=4
+
+  # Dedicated AI worker with concurrency=1 to prevent resource contention
+  ai-worker:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: geekygoose-ai-worker
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-geekygoose}:${POSTGRES_PASSWORD:-dev_password_123}@postgres:5432/${POSTGRES_DB:-geekygoose}
@@ -211,7 +241,8 @@ services:
       - ./apps/api:/app
     networks:
       - backend
-    command: celery -A celery_app worker --loglevel=info
+    # Process only AI tasks, one at a time to prevent resource exhaustion
+    command: celery -A celery_app worker --loglevel=info --queues=ai_tasks --concurrency=1 --prefetch-multiplier=1
 
 volumes:
   postgres_data:

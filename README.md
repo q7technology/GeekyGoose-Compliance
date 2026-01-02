@@ -157,7 +157,8 @@ graph TB
 - **Python 3.11**: Modern async/await patterns with enhanced error handling
 - **PostgreSQL**: Relational data with performance-optimized indexes
 - **MinIO**: S3-compatible object storage for documents
-- **Redis**: Background job queue for AI processing
+- **Redis**: Background job queue with dedicated AI task queue
+- **Celery Workers**: Separate workers for AI tasks (concurrency=1) and general tasks (concurrency=4)
 - **Security Middleware**: Comprehensive security headers and validation
 - **Request Logging**: Complete audit trail and monitoring
 
@@ -718,11 +719,28 @@ curl https://yourdomain.com/health
   - **Control Detail View**: Prominent model display in scan result header
   - **Scan Completion Alert**: Model information included in success notifications
 
+#### ⚡ **Performance & Reliability**
+- **Dedicated AI Task Queue**: Separate Celery worker for AI tasks prevents resource contention
+  - **Serial Processing**: AI scans run one at a time (concurrency=1) to prevent memory issues
+  - **Separate Workers**: Multi-threaded worker (concurrency=4) for text extraction and general tasks
+  - **Queue Isolation**: AI tasks (`ai_tasks` queue) separate from extraction tasks (`extraction` queue)
+  - **Resource Management**: Prevents Ollama/OpenAI API overload and ensures stable performance
+
+- **Database Improvements**: Enhanced schema and initialization
+  - **Complete Table Initialization**: All models now properly defined in SQL initialization script
+  - **Document Control Links**: Added missing table for AI-suggested control links
+  - **Proper Indexes**: Performance indexes for all foreign keys and frequently queried columns
+  - **Update Triggers**: Automatic `updated_at` timestamp maintenance for all tables
+  - **JSONB Support**: Proper handling of PostgreSQL JSONB columns for scan results
+
 #### 🐛 **Bug Fixes**
 - Fixed document download failures due to incorrect storage method calls
 - Resolved socket hang-up errors during multiple file uploads
 - Fixed database foreign key constraint violations during document deletion
 - Corrected AI JSON parsing warnings and response truncation issues
+- Fixed JSONB column handling for PostgreSQL 18+ compatibility
+- Fixed linting errors in frontend code (const vs let declarations)
+- Resolved missing table initialization for document_control_links
 - Resolved Next.js 16.1.1 compatibility issues with dependencies
 - Fixed overflow issues in document display containers
 - Corrected OCR text extraction for various image formats

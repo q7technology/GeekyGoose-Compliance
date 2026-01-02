@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS document_pages (
     UNIQUE(document_id, page_num)
 );
 
--- Evidence links table
+-- Evidence links table (manual user-created links)
 CREATE TABLE IF NOT EXISTS evidence_links (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     org_id UUID NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
@@ -94,6 +94,18 @@ CREATE TABLE IF NOT EXISTS evidence_links (
     note TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Document control links table (AI-suggested links)
+CREATE TABLE IF NOT EXISTS document_control_links (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    control_id UUID NOT NULL REFERENCES controls(id) ON DELETE CASCADE,
+    confidence REAL NOT NULL DEFAULT 0.0,
+    reasoning TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(document_id, control_id)
 );
 
 -- Scans table
@@ -173,6 +185,9 @@ CREATE INDEX IF NOT EXISTS idx_documents_org_id ON documents(org_id);
 CREATE INDEX IF NOT EXISTS idx_document_pages_document_id ON document_pages(document_id);
 CREATE INDEX IF NOT EXISTS idx_evidence_links_org_id ON evidence_links(org_id);
 CREATE INDEX IF NOT EXISTS idx_evidence_links_control_id ON evidence_links(control_id);
+CREATE INDEX IF NOT EXISTS idx_document_control_links_document_id ON document_control_links(document_id);
+CREATE INDEX IF NOT EXISTS idx_document_control_links_control_id ON document_control_links(control_id);
+CREATE INDEX IF NOT EXISTS idx_document_control_links_confidence ON document_control_links(confidence);
 CREATE INDEX IF NOT EXISTS idx_scans_org_id ON scans(org_id);
 CREATE INDEX IF NOT EXISTS idx_scans_control_id ON scans(control_id);
 CREATE INDEX IF NOT EXISTS idx_scan_results_scan_id ON scan_results(scan_id);
@@ -197,6 +212,7 @@ DROP TRIGGER IF EXISTS update_controls_updated_at ON controls;
 DROP TRIGGER IF EXISTS update_requirements_updated_at ON requirements;
 DROP TRIGGER IF EXISTS update_documents_updated_at ON documents;
 DROP TRIGGER IF EXISTS update_evidence_links_updated_at ON evidence_links;
+DROP TRIGGER IF EXISTS update_document_control_links_updated_at ON document_control_links;
 DROP TRIGGER IF EXISTS update_scans_updated_at ON scans;
 DROP TRIGGER IF EXISTS update_settings_updated_at ON settings;
 
@@ -207,5 +223,6 @@ CREATE TRIGGER update_controls_updated_at BEFORE UPDATE ON controls FOR EACH ROW
 CREATE TRIGGER update_requirements_updated_at BEFORE UPDATE ON requirements FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_documents_updated_at BEFORE UPDATE ON documents FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_evidence_links_updated_at BEFORE UPDATE ON evidence_links FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_document_control_links_updated_at BEFORE UPDATE ON document_control_links FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_scans_updated_at BEFORE UPDATE ON scans FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_settings_updated_at BEFORE UPDATE ON settings FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

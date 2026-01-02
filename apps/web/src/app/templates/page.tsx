@@ -245,7 +245,7 @@ export default function TemplatesPage() {
       setTemplates(existingTemplates);
 
       // Fetch controls from API to check if they have linked documents/evidence
-      let controlsEvidenceMap: { [key: string]: boolean } = {};
+      const controlsEvidenceMap: { [key: string]: boolean } = {};
       try {
         // Try to fetch Essential Eight framework controls
         const frameworksResponse = await fetch('/api/frameworks');

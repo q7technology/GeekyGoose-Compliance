@@ -28,14 +28,15 @@ celery_app.conf.update(
     # Task routing
     task_routes={
         'worker_tasks.extract_document_text': {'queue': 'extraction'},
-        'worker_tasks.process_scan': {'queue': 'scanning'},
+        'worker_tasks.process_scan': {'queue': 'ai_tasks'},  # AI-intensive scanning
+        'worker_tasks.cleanup_old_scans': {'queue': 'celery'},  # Lightweight tasks
     },
-    
+
     # Define queues
     task_queues=(
-        Queue('extraction', routing_key='extraction'),
-        Queue('scanning', routing_key='scanning'),
-        Queue('celery', routing_key='celery'),  # default queue
+        Queue('ai_tasks', routing_key='ai_tasks'),      # AI tasks (concurrency=1)
+        Queue('extraction', routing_key='extraction'),  # Text extraction
+        Queue('celery', routing_key='celery'),          # Default queue
     ),
     
     # Worker configuration
