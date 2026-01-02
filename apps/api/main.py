@@ -1284,6 +1284,12 @@ async def process_document_ai_analysis_background(document_id: str, filename: st
             min_threshold = settings.min_confidence_threshold if settings else 0.90
             use_dual_vision = bool(settings.use_dual_vision_validation) if settings and hasattr(settings, 'use_dual_vision_validation') else False
 
+            # Log which mode we're using
+            if use_dual_vision:
+                logger.info(f"📸 DUAL VISION MODE: Will validate with both GPT-4o AND Qwen2-VL")
+            else:
+                logger.info(f"📸 SINGLE MODEL MODE: Using configured provider ({settings.ai_provider if settings else 'default'})")
+
             if use_dual_vision and suggested_controls:
                 logger.info(f"Dual vision validation enabled for document {document_id}")
                 try:
@@ -1342,6 +1348,10 @@ async def process_document_ai_analysis_background(document_id: str, filename: st
                 except Exception as e:
                     logger.error(f"Dual vision validation error: {e}")
                     # Fall back to single model result on error
+            else:
+                # Single model mode - use the initial analysis result
+                if suggested_controls:
+                    logger.info(f"Using single model result: {suggested_controls[0].get('control_code')} (confidence: {suggested_controls[0].get('confidence', 0.0):.2f})")
 
             # Update document with AI processing complete status
             document = db.query(Document).filter(Document.id == document_id).first()
