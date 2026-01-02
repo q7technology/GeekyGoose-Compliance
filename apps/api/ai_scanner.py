@@ -12,6 +12,11 @@ from models import Control, Requirement
 
 logger = logging.getLogger(__name__)
 
+# NOT A SECRET: This is a placeholder key for local AI endpoints (Ollama, LM Studio, etc.)
+# that don't require authentication. It has no security value and is never used with real APIs.
+# The OpenAI SDK requires an api_key parameter, so we provide this dummy value for local endpoints.
+LOCAL_AI_PLACEHOLDER_KEY = os.getenv('LOCAL_AI_PLACEHOLDER_KEY', 'sk-local-endpoint-no-auth')
+
 def create_chat_completion_safe(client, model, messages, temperature=None):
     """
     Create a chat completion with safe fallbacks for different endpoint capabilities.
@@ -45,9 +50,9 @@ def get_ai_client():
         if (not api_key or api_key == 'your_openai_api_key_here') and not base_url:
             raise ValueError("OPENAI_API_KEY not configured. Please set a valid OpenAI API key for default OpenAI endpoint.")
         
-        # Use dummy key for custom endpoints that don't require authentication
+        # Use placeholder key for custom endpoints that don't require authentication
         if (not api_key or api_key == 'your_openai_api_key_here') and base_url:
-            api_key = "sk-dummy-key-for-local-api"
+            api_key = LOCAL_AI_PLACEHOLDER_KEY
         
         try:
             from openai import OpenAI
@@ -271,11 +276,21 @@ ANALYSIS INSTRUCTIONS:
 
 2. For any requirement that is PARTIAL, FAIL, or NOT_FOUND, identify gaps and recommend specific actions.
 
-3. Be conservative: if evidence is unclear or ambiguous, use lower confidence scores.
+3. BE EXTREMELY STRICT with confidence scores. Use the following guidelines:
+   - 0.9-1.0: Only for PERFECT, unambiguous, comprehensive evidence with explicit policy statements
+   - 0.7-0.8: Strong evidence with clear documentation and multiple supporting sources
+   - 0.5-0.6: Weak or partial evidence, screenshots without context, or ambiguous documentation
+   - 0.3-0.4: Minimal evidence, uncertain relevance, or requires significant interpretation
+   - 0.0-0.2: No clear evidence or highly questionable relevance
 
-4. Never hallucinate - only cite evidence that actually exists in the provided documents.
+4. Screenshots alone should receive LOW confidence (0.3-0.5) unless they clearly show comprehensive compliance
+   with context and supporting documentation.
 
-5. Focus on concrete evidence like policies, procedures, configurations, and screenshots.
+5. Be HIGHLY CRITICAL: If evidence is unclear, incomplete, ambiguous, or requires assumptions, assign LOW confidence.
+
+6. Never hallucinate - only cite evidence that actually exists in the provided documents.
+
+7. Require EXPLICIT, DETAILED evidence. Generic statements or vague references should receive very low scores.
 
 You must respond with valid JSON only, following this exact schema:
 {

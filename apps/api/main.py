@@ -32,6 +32,11 @@ from init_db import initialize_database
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# NOT A SECRET: This is a placeholder key for local AI endpoints (Ollama, LM Studio, etc.)
+# that don't require authentication. It has no security value and is never used with real APIs.
+# The OpenAI SDK requires an api_key parameter, so we provide this dummy value for local endpoints.
+LOCAL_AI_PLACEHOLDER_KEY = os.getenv('LOCAL_AI_PLACEHOLDER_KEY', 'sk-local-endpoint-no-auth')
+
 def _analyze_document_two_step(file_text: str, filename: str, available_controls: List[dict], ai_client) -> List[dict]:
     """
     Two-step document analysis:
@@ -277,12 +282,12 @@ def generate_fallback_suggestions_from_filename(filename: str, available_control
         
         # Application control documents
         elif any(word in filename_lower for word in ['app', 'software', 'application']):
-            if any(word in control['code'].lower() or word in control['title'].lower() 
+            if any(word in control['code'].lower() or word in control['title'].lower()
                    for word in ['application', 'software']):
-                confidence = 0.6
+                confidence = 0.4  # Lower confidence for filename-only matching
                 reasoning = f"Document name suggests application control, matching {control['code']}"
-        
-        if confidence > 0.5:
+
+        if confidence > 0.3:  # Raised threshold for suggestions
             suggestions.append({
                 'control_code': control['code'],
                 'control_title': control['title'],
@@ -1332,14 +1337,14 @@ def extract_suggestions_from_text(text_response: str, available_controls: list) 
         if (control_code in text_lower or 
             any(word in text_lower for word in control_title.split() if len(word) > 3)):
             
-            # Estimate confidence based on how prominently it's mentioned
-            confidence = 0.6
+            # Estimate confidence based on how prominently it's mentioned (more strict)
+            confidence = 0.4  # Lower base confidence
             if control_code in text_lower:
-                confidence = 0.8
+                confidence = 0.6  # Reduced from 0.8
             if 'relevant' in text_lower or 'applicable' in text_lower:
                 confidence += 0.1
             if 'not' in text_lower and control_code in text_lower:
-                confidence = max(0.3, confidence - 0.3)
+                confidence = max(0.2, confidence - 0.4)  # More penalty for negation
                 
             suggestions.append({
                 'control_code': control['code'],
@@ -1409,10 +1414,10 @@ def generate_fallback_suggestions_from_filename(filename: str, available_control
             # Find matching controls
             for control in available_controls:
                 control_lower = (control['title'] + ' ' + control.get('description', '')).lower()
-                if (category in control_lower or 
+                if (category in control_lower or
                     any(keyword in control_lower for keyword in keywords[:2])):
-                    
-                    confidence = 0.6 if category == 'authentication' and 'mfa' in filename_lower else 0.5
+
+                    confidence = 0.4 if category == 'authentication' and 'mfa' in filename_lower else 0.35  # Lower baseline for filename matching
                     
                     suggestions.append({
                         'control_code': control['code'],
@@ -1674,7 +1679,7 @@ async def run_comprehensive_ai_analysis(request: dict, db: Session = Depends(get
                 })
             else:
                 max_confidence = max(link.confidence for link in control_evidence)
-                if max_confidence < 0.6:
+                if max_confidence < 0.7:  # Raised threshold - require stronger evidence to not be high risk
                     high_risk_gaps += 1
                     control_analysis.append({
                         'control_code': control.code,
@@ -2266,10 +2271,10 @@ async def test_ai_connection(settings: AISettingsRequest):
             if not api_key and not base_url:
                 raise HTTPException(status_code=400, detail="OpenAI API key is required for default OpenAI endpoint")
             
-            # Use dummy key for custom endpoints that don't require authentication
+            # Use placeholder key for custom endpoints that don't require authentication
             if not api_key and base_url:
-                api_key = "sk-dummy-key-for-local-api"
-            
+                api_key = LOCAL_AI_PLACEHOLDER_KEY
+
             client = OpenAI(
                 api_key=api_key,
                 base_url=base_url
@@ -2428,10 +2433,10 @@ async def get_openai_models(endpoint: str = None, api_key: str = None):
         if not api_key and not base_url:
             raise HTTPException(status_code=400, detail="OpenAI API key is required for default OpenAI endpoint")
         
-        # Use dummy key for custom endpoints that don't require authentication
+        # Use placeholder key for custom endpoints that don't require authentication
         if not api_key and base_url:
-            api_key = "sk-dummy-key-for-local-api"
-        
+            api_key = LOCAL_AI_PLACEHOLDER_KEY
+
         # Create client with custom endpoint if provided
         client = OpenAI(
             api_key=api_key,
@@ -2482,7 +2487,7 @@ async def get_openai_models(endpoint: str = None, api_key: str = None):
             if base_url:
                 try:
                     import requests
-                    headers = {"Authorization": f"Bearer {api_key}"} if api_key != "sk-dummy-key-for-local-api" else {}
+                    headers = {"Authorization": f"Bearer {api_key}"} if api_key != LOCAL_AI_PLACEHOLDER_KEY else {}
                     models_url = f"{base_url.rstrip('/')}/models"
                     logger.info(f"Trying direct HTTP request to: {models_url}")
                     
@@ -3209,12 +3214,21 @@ Content preview: {file_text[:5000]}{'...' if len(file_text) > 5000 else ''}
 Available compliance controls:
 {controls_context}
 
-For each relevant control, provide a confidence score (0.0-1.0) and brief reasoning.
+BE EXTREMELY STRICT with confidence scores. Use these guidelines:
+- 0.8-1.0: ONLY for explicit, comprehensive policy documents with clear compliance statements
+- 0.6-0.7: Strong documentation with specific compliance details
+- 0.4-0.5: Partial evidence or screenshots with limited context
+- 0.2-0.3: Weak evidence, filename-only matching, or requires significant interpretation
+- 0.0-0.1: No clear relevance
+
+CRITICAL: Screenshots or images alone should receive LOW confidence (0.2-0.4) unless they show comprehensive,
+unambiguous compliance with clear context.
+
 Respond in JSON format with a "suggestions" array containing objects with:
 - control_code: the control code
-- control_title: the control title  
+- control_title: the control title
 - framework_name: the framework name
-- confidence: score from 0.0 to 1.0
+- confidence: score from 0.0 to 1.0 (BE STRICT - most should be < 0.5)
 - reasoning: brief explanation
 
 Limit to the top 3 most relevant matches. If no relevant matches, return empty array.

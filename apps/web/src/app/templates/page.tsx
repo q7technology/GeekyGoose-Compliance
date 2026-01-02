@@ -40,23 +40,167 @@ interface Template {
     options?: string[];
   }>;
   evidence_requirements: Array<{
-    requirement_id: string;
+    requirement_id?: string;
     requirement_code: string;
     evidence_type: string;
     description: string;
     required: boolean;
+    ai_validation_prompt?: string;
   }>;
   created_at: string;
   updated_at: string;
+  isSatisfied?: boolean;
+  isGap?: boolean;
 }
+
+interface EssentialEightTemplate {
+  id: string;
+  code: string;
+  title: string;
+  description: string;
+  company_fields: Array<{
+    field_name: string;
+    field_type: 'text' | 'textarea' | 'select' | 'file';
+    required: boolean;
+    placeholder: string;
+    description: string;
+    options?: string[];
+  }>;
+  evidence_requirements: Array<{
+    requirement_code: string;
+    evidence_type: string;
+    description: string;
+    required: boolean;
+    ai_validation_prompt: string;
+  }>;
+}
+
+// Essential Eight Templates Data
+const essentialEightTemplates: EssentialEightTemplate[] = [
+  {
+    id: 'ee-1',
+    code: 'EE-1',
+    title: 'Application Control',
+    description: 'Application control implemented to prevent execution of unapproved/malicious applications including .exe, DLL, scripts, installers, compiled HTML, HTML applications and control panel applets.',
+    company_fields: [
+      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
+      { field_name: 'application_control_owner', field_type: 'text', required: true, placeholder: 'IT Security Manager', description: 'Role/person responsible for application control' },
+      { field_name: 'application_control_solution', field_type: 'select', required: true, placeholder: 'Select application control solution', description: 'Primary application control technology used', options: ['Windows Defender Application Control', 'AppLocker', 'CrowdStrike', 'Carbon Black', 'SentinelOne', 'Other'] }
+    ],
+    evidence_requirements: [
+      { requirement_code: 'EE-1-POL', evidence_type: 'policy', description: 'Application Control Policy document defining approved applications and control mechanisms', required: true, ai_validation_prompt: 'Verify this document contains: 1) Clear definition of approved applications, 2) Process for approving new applications, 3) Technical controls to prevent unauthorized execution, 4) Roles and responsibilities, 5) Review and update procedures' }
+    ]
+  },
+  {
+    id: 'ee-2',
+    code: 'EE-2',
+    title: 'Patch Applications',
+    description: 'Patches, updates or vendor mitigations for security vulnerabilities in applications and drivers are applied within one month of release, or within 48 hours if an exploit exists.',
+    company_fields: [
+      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
+      { field_name: 'patch_management_owner', field_type: 'text', required: true, placeholder: 'IT Operations Manager', description: 'Role/person responsible for patch management' },
+      { field_name: 'patch_management_tools', field_type: 'textarea', required: true, placeholder: 'List patch management tools used (e.g., WSUS, SCCM, Intune)', description: 'Tools and systems used for patch management' }
+    ],
+    evidence_requirements: [
+      { requirement_code: 'EE-2-POL', evidence_type: 'policy', description: 'Patch Management Policy defining timelines and responsibilities', required: true, ai_validation_prompt: 'Verify policy contains: 1) Patch timelines (within 1 month, 48 hours for exploits), 2) Roles and responsibilities, 3) Risk assessment process, 4) Testing procedures, 5) Emergency patching process' }
+    ]
+  },
+  {
+    id: 'ee-3',
+    code: 'EE-3',
+    title: 'Configure Microsoft Office Macro Settings',
+    description: 'Configure Microsoft Office macro settings to block macros from the internet, and only allow vetted macros either in \'trusted locations\' with limited write access or digitally signed with a trusted certificate.',
+    company_fields: [
+      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
+      { field_name: 'office_macro_administrator', field_type: 'text', required: true, placeholder: 'IT Administrator', description: 'Role/person responsible for Office macro configuration' },
+      { field_name: 'office_versions', field_type: 'textarea', required: true, placeholder: 'List Microsoft Office versions in use (e.g., Office 365, Office 2019)', description: 'Microsoft Office versions deployed in your environment' }
+    ],
+    evidence_requirements: [
+      { requirement_code: 'EE-3-POL', evidence_type: 'policy', description: 'Microsoft Office Macro Security Policy defining macro restrictions', required: true, ai_validation_prompt: 'Verify policy mandates: 1) Block macros from internet, 2) Trusted locations with limited write access, 3) Digital signing requirements, 4) User training on macro risks, 5) Exception process' }
+    ]
+  },
+  {
+    id: 'ee-4',
+    code: 'EE-4',
+    title: 'User Application Hardening',
+    description: 'Configure web browsers to block or disable support for Flash content, ads and Java on the internet. Configure web browsers to block web content from suspicious or malicious websites.',
+    company_fields: [
+      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
+      { field_name: 'browser_administrator', field_type: 'text', required: true, placeholder: 'IT Security Administrator', description: 'Role/person responsible for browser security configuration' },
+      { field_name: 'browsers_in_use', field_type: 'textarea', required: true, placeholder: 'List browsers used (e.g., Chrome, Edge, Firefox)', description: 'Web browsers deployed in your environment' }
+    ],
+    evidence_requirements: [
+      { requirement_code: 'EE-4-POL', evidence_type: 'policy', description: 'User Application Hardening Policy defining browser security requirements', required: true, ai_validation_prompt: 'Verify policy requires: 1) Flash content blocked, 2) Java disabled on internet, 3) Ad blocking enabled, 4) Malicious website blocking, 5) Browser security configurations' }
+    ]
+  },
+  {
+    id: 'ee-5',
+    code: 'EE-5',
+    title: 'Restrict Administrative Privileges',
+    description: 'Restrict administrative privileges to operating systems and applications based on user duties. Regularly validate the use of administrative privileges.',
+    company_fields: [
+      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
+      { field_name: 'privilege_administrator', field_type: 'text', required: true, placeholder: 'Identity and Access Manager', description: 'Role/person responsible for administrative privilege management' },
+      { field_name: 'privilege_management_tools', field_type: 'textarea', required: true, placeholder: 'List tools used for privilege management (e.g., Active Directory, PAM solution)', description: 'Tools and systems used for managing administrative privileges' }
+    ],
+    evidence_requirements: [
+      { requirement_code: 'EE-5-POL', evidence_type: 'policy', description: 'Administrative Privilege Management Policy defining access controls', required: true, ai_validation_prompt: 'Verify policy includes: 1) Least privilege principle, 2) Role-based access controls, 3) Approval process for admin privileges, 4) Regular review requirements, 5) Privilege escalation procedures' }
+    ]
+  },
+  {
+    id: 'ee-6',
+    code: 'EE-6',
+    title: 'Patch Operating Systems',
+    description: 'Patches, updates or vendor mitigations for security vulnerabilities in operating systems and firmware are applied within one month of release, or within 48 hours if an exploit exists.',
+    company_fields: [
+      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
+      { field_name: 'os_patch_administrator', field_type: 'text', required: true, placeholder: 'Systems Administrator', description: 'Role/person responsible for OS patch management' },
+      { field_name: 'operating_systems', field_type: 'textarea', required: true, placeholder: 'List OS versions (e.g., Windows 10/11, Windows Server 2019/2022, Linux)', description: 'Operating systems in your environment' }
+    ],
+    evidence_requirements: [
+      { requirement_code: 'EE-6-POL', evidence_type: 'policy', description: 'Operating System Patch Management Policy defining timelines', required: true, ai_validation_prompt: 'Verify policy mandates: 1) OS patches within 1 month, 2) Critical patches within 48 hours if exploit exists, 3) Testing requirements, 4) Emergency patching process, 5) Firmware update procedures' }
+    ]
+  },
+  {
+    id: 'ee-7',
+    code: 'EE-7',
+    title: 'Multi-Factor Authentication',
+    description: 'Multi-factor authentication used for all users when authenticating to their organization\'s systems.',
+    company_fields: [
+      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
+      { field_name: 'mfa_administrator', field_type: 'text', required: true, placeholder: 'Identity and Access Manager', description: 'Role/person responsible for MFA implementation' },
+      { field_name: 'mfa_solutions', field_type: 'textarea', required: true, placeholder: 'List MFA solutions (e.g., Microsoft Authenticator, Google Authenticator, Hardware tokens)', description: 'MFA technologies and solutions implemented' }
+    ],
+    evidence_requirements: [
+      { requirement_code: 'EE-7-POL', evidence_type: 'policy', description: 'Multi-Factor Authentication Policy requiring MFA for all users', required: true, ai_validation_prompt: 'Verify policy mandates: 1) MFA for ALL users, 2) Acceptable MFA methods, 3) Enrollment requirements, 4) Exemption process (if any), 5) Regular review of MFA status' }
+    ]
+  },
+  {
+    id: 'ee-8',
+    code: 'EE-8',
+    title: 'Regular Backups',
+    description: 'Regular backups of important data, software and configuration settings are performed and tested to ensure data can be restored.',
+    company_fields: [
+      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
+      { field_name: 'backup_administrator', field_type: 'text', required: true, placeholder: 'Backup Administrator', description: 'Role/person responsible for backup operations' },
+      { field_name: 'backup_solutions', field_type: 'textarea', required: true, placeholder: 'List backup solutions (e.g., Veeam, Azure Backup, AWS Backup)', description: 'Backup technologies and solutions used' }
+    ],
+    evidence_requirements: [
+      { requirement_code: 'EE-8-POL', evidence_type: 'policy', description: 'Data Backup and Recovery Policy defining backup requirements', required: true, ai_validation_prompt: 'Verify policy includes: 1) Regular backup schedules, 2) Data types to be backed up, 3) Retention requirements, 4) Testing procedures, 5) Recovery time objectives' }
+    ]
+  }
+];
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([]);
+  const [allRequiredTemplates, setAllRequiredTemplates] = useState<Template[]>([]);
   const [frameworks, setFrameworks] = useState<Framework[]>([]);
   const [controls, setControls] = useState<Control[]>([]);
   const [selectedFramework, setSelectedFramework] = useState<string>('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showEssentialEightDropdown, setShowEssentialEightDropdown] = useState(false);
+  const [controlsWithEvidence, setControlsWithEvidence] = useState<{ [key: string]: boolean }>({});
   
   // Create template form state
   const [newTemplate, setNewTemplate] = useState({
@@ -79,18 +223,92 @@ export default function TemplatesPage() {
     ]).finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (showEssentialEightDropdown && !target.closest('.dropdown-container')) {
+        setShowEssentialEightDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEssentialEightDropdown]);
+
   const fetchTemplates = async () => {
     try {
       // Fetch templates from localStorage (where Essential Eight templates will be stored)
       const storedTemplates = localStorage.getItem('compliance_templates');
-      if (storedTemplates) {
-        setTemplates(JSON.parse(storedTemplates));
-      } else {
-        setTemplates([]);
+      const existingTemplates: Template[] = storedTemplates ? JSON.parse(storedTemplates) : [];
+      setTemplates(existingTemplates);
+
+      // Fetch controls from API to check if they have linked documents/evidence
+      let controlsEvidenceMap: { [key: string]: boolean } = {};
+      try {
+        // Try to fetch Essential Eight framework controls
+        const frameworksResponse = await fetch('/api/frameworks');
+        if (frameworksResponse.ok) {
+          const frameworksData = await frameworksResponse.json();
+          const essentialEightFramework = frameworksData.frameworks?.find(
+            (f: any) => f.name?.toLowerCase().includes('essential eight')
+          );
+
+          if (essentialEightFramework) {
+            const controlsResponse = await fetch(`/api/frameworks/${essentialEightFramework.id}/controls`);
+            if (controlsResponse.ok) {
+              const controlsData = await controlsResponse.json();
+              controlsData.controls?.forEach((control: any) => {
+                // Mark as satisfied if control has linked documents
+                controlsEvidenceMap[control.code] = (control.linked_documents_count || 0) > 0;
+              });
+            }
+          }
+        }
+        setControlsWithEvidence(controlsEvidenceMap);
+      } catch (error) {
+        console.error('Failed to fetch controls evidence status:', error);
       }
+
+      // Convert Essential Eight templates to Template format and check if they're satisfied
+      const essentialEightAsTemplates: Template[] = essentialEightTemplates.map(eeTemplate => {
+        // Check if a template already exists for this control
+        const existingTemplate = existingTemplates.find(
+          (t: Template) => t.control?.code === eeTemplate.code
+        );
+
+        // Control is satisfied if it has linked documents OR a generated template
+        const hasEvidence = controlsEvidenceMap[eeTemplate.code] || false;
+        const hasTemplate = !!existingTemplate;
+        const isSatisfied = hasEvidence || hasTemplate;
+
+        return {
+          id: eeTemplate.id,
+          name: `${eeTemplate.code} - ${eeTemplate.title}`,
+          description: eeTemplate.description,
+          control: {
+            id: eeTemplate.id,
+            code: eeTemplate.code,
+            title: eeTemplate.title,
+            framework_name: 'Essential Eight'
+          },
+          company_fields: eeTemplate.company_fields,
+          evidence_requirements: eeTemplate.evidence_requirements,
+          created_at: '',
+          updated_at: '',
+          isSatisfied,
+          isGap: !isSatisfied
+        };
+      });
+
+      // Combine custom templates with Essential Eight templates (gaps only)
+      const allTemplates = [...existingTemplates, ...essentialEightAsTemplates];
+      setAllRequiredTemplates(allTemplates);
     } catch (error) {
       console.error('Failed to fetch templates:', error);
       setTemplates([]);
+      setAllRequiredTemplates([]);
     }
   };
 
@@ -181,6 +399,52 @@ export default function TemplatesPage() {
     }));
   };
 
+  const generateEssentialEightTemplate = async (eeTemplateId: string) => {
+    const eeTemplate = essentialEightTemplates.find(t => t.id === eeTemplateId);
+    if (!eeTemplate) return;
+
+    try {
+      const newTemplate: Template = {
+        id: `ee-template-${eeTemplateId}-${Date.now()}`,
+        name: `${eeTemplate.code} - ${eeTemplate.title} Policy Template`,
+        description: `Policy template for ${eeTemplate.title}: ${eeTemplate.description}`,
+        control: {
+          id: eeTemplate.id,
+          code: eeTemplate.code,
+          title: eeTemplate.title,
+          framework_name: 'Essential Eight'
+        },
+        company_fields: eeTemplate.company_fields,
+        evidence_requirements: eeTemplate.evidence_requirements,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      // Store in localStorage
+      const existingTemplates = localStorage.getItem('compliance_templates');
+      const templates = existingTemplates ? JSON.parse(existingTemplates) : [];
+
+      // Check if template already exists for this control
+      const existingTemplate = templates.find((t: any) => t.control?.code === eeTemplate.code);
+      if (existingTemplate) {
+        alert(`Template for ${eeTemplate.code} already exists!`);
+        return;
+      }
+
+      templates.push(newTemplate);
+      localStorage.setItem('compliance_templates', JSON.stringify(templates));
+
+      // Refresh templates
+      fetchTemplates();
+      setShowEssentialEightDropdown(false);
+
+      alert(`Template created for ${eeTemplate.code}!`);
+    } catch (error) {
+      console.error('Failed to create template:', error);
+      alert('Failed to create template. Please try again.');
+    }
+  };
+
   const createTemplate = async () => {
     try {
       const foundControl = controls.find(c => c.id === newTemplate.control_id);
@@ -201,15 +465,15 @@ export default function TemplatesPage() {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
-      
+
       // Store in localStorage
       const existingTemplates = localStorage.getItem('compliance_templates');
       const templates = existingTemplates ? JSON.parse(existingTemplates) : [];
       templates.unshift(template);
       localStorage.setItem('compliance_templates', JSON.stringify(templates));
-      
-      // Update state
-      setTemplates(prev => [template, ...prev]);
+
+      // Update state and refresh
+      fetchTemplates();
       setShowCreateModal(false);
       setNewTemplate({
         name: '',
@@ -254,12 +518,53 @@ export default function TemplatesPage() {
               </p>
             </div>
             <div className="flex space-x-3">
-              <Link
-                href="/templates/essential-eight"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              >
-                Essential Eight Templates
-              </Link>
+              <div className="relative dropdown-container">
+                <button
+                  onClick={() => setShowEssentialEightDropdown(!showEssentialEightDropdown)}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Essential Eight Templates
+                  <svg className="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+                {showEssentialEightDropdown && (
+                  <div className="absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 max-h-96 overflow-y-auto">
+                    <div className="py-1" role="menu">
+                      {essentialEightTemplates.map((eeTemplate) => {
+                        const existingTemplate = templates.find(t => t.control?.code === eeTemplate.code);
+                        const hasEvidence = controlsWithEvidence[eeTemplate.code] || false;
+                        const isSatisfied = hasEvidence || !!existingTemplate;
+
+                        return (
+                          <button
+                            key={eeTemplate.id}
+                            onClick={() => generateEssentialEightTemplate(eeTemplate.id)}
+                            disabled={isSatisfied}
+                            className={`w-full text-left px-4 py-3 text-sm border-b border-gray-100 ${
+                              isSatisfied
+                                ? 'bg-gray-50 text-gray-400 cursor-not-allowed'
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`}
+                            role="menuitem"
+                          >
+                            <div className="font-medium">{eeTemplate.code}: {eeTemplate.title}</div>
+                            <div className="text-xs mt-1">
+                              {existingTemplate ? (
+                                <span className="text-green-600">✓ Template Created</span>
+                              ) : hasEvidence ? (
+                                <span className="text-green-600">✓ Evidence Linked</span>
+                              ) : (
+                                <span className="text-gray-500">Click to generate template</span>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
               <button
                 onClick={() => setShowCreateModal(true)}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -272,65 +577,103 @@ export default function TemplatesPage() {
 
         {/* Templates Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {templates.map((template) => (
-            <div
-              key={template.id}
-              className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {template.name}
-                    </h3>
-                    <p className="text-sm text-blue-600 mt-1">
-                      {template.control.code}: {template.control.title}
-                    </p>
-                    <span className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full mt-2">
-                      {template.control.framework_name}
-                    </span>
+          {allRequiredTemplates.map((template) => {
+            const isGap = template.isGap;
+            const isSatisfied = template.isSatisfied;
+
+            return (
+              <div
+                key={template.id}
+                className={`bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow ${
+                  isSatisfied ? 'border-green-300' : isGap ? 'border-yellow-300' : 'border-gray-200'
+                }`}
+              >
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {template.name}
+                        </h3>
+                      </div>
+                      <p className="text-sm text-blue-600 mt-1">
+                        {template.control.code}: {template.control.title}
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+                          {template.control.framework_name}
+                        </span>
+                        {isSatisfied && (
+                          <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
+                            ✓ Requirement Satisfied
+                          </span>
+                        )}
+                        {isGap && (
+                          <span className="inline-block bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full">
+                            ⚠ Gap - Template Needed
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                  {template.description}
-                </p>
-                
-                <div className="mb-4">
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-                    <span>{template.company_fields.length} company fields</span>
-                    <span>{template.evidence_requirements.length} evidence requirements</span>
+
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                    {isGap
+                      ? `This is a required template for ${template.control.framework_name}. Click "Generate Template" to create it from the Essential Eight Templates dropdown above.`
+                      : template.description
+                    }
+                  </p>
+
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                      <span>{template.company_fields.length} company fields</span>
+                      <span>{template.evidence_requirements.length} evidence requirements</span>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <Link
-                    href={`/templates/${template.id}/fill`}
-                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-700"
-                  >
-                    Fill Template
-                  </Link>
-                  <div className="flex space-x-2">
-                    <Link
-                      href={`/templates/${template.id}`}
-                      className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                      View
-                    </Link>
-                    <Link
-                      href={`/templates/${template.id}/edit`}
-                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700"
-                    >
-                      Edit
-                    </Link>
-                  </div>
+
+                  {!isGap && (
+                    <div className="flex justify-between items-center">
+                      <Link
+                        href={`/templates/${template.id}/fill`}
+                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-700"
+                      >
+                        Fill Template
+                      </Link>
+                      <div className="flex space-x-2">
+                        <Link
+                          href={`/templates/${template.id}`}
+                          className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50"
+                        >
+                          View
+                        </Link>
+                        <Link
+                          href={`/templates/${template.id}/edit`}
+                          className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700"
+                        >
+                          Edit
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                  {isGap && (
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => {
+                          setShowEssentialEightDropdown(true);
+                        }}
+                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-yellow-600 hover:bg-yellow-700"
+                      >
+                        Generate Template
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {templates.length === 0 && (
+        {allRequiredTemplates.length === 0 && (
           <div className="text-center py-12">
             <div className="text-gray-500">
               <svg className="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
