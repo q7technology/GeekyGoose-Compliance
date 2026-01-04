@@ -2,28 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { essentialEightTemplates, EssentialEightTemplate } from '../../../data/essential-eight-templates';
 
-interface EssentialEightTemplate {
-  id: string;
-  code: string;
-  title: string;
-  description: string;
-  company_fields: Array<{
-    field_name: string;
-    field_type: 'text' | 'textarea' | 'select' | 'file';
-    required: boolean;
-    placeholder: string;
-    description: string;
-    options?: string[];
-  }>;
-  evidence_requirements: Array<{
-    requirement_code: string;
-    evidence_type: string;
-    description: string;
-    required: boolean;
-    ai_validation_prompt: string;
-  }>;
-}
+// EssentialEightTemplate interface is now imported from shared data file
 
 interface EssentialEightControl {
   id: string;
@@ -57,121 +38,7 @@ interface EssentialEightControl {
   };
 }
 
-// Essential Eight Templates Data
-const essentialEightTemplates: EssentialEightTemplate[] = [
-  {
-    id: 'ee-1',
-    code: 'EE-1',
-    title: 'Application Control',
-    description: 'Application control implemented to prevent execution of unapproved/malicious applications including .exe, DLL, scripts, installers, compiled HTML, HTML applications and control panel applets.',
-    company_fields: [
-      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
-      { field_name: 'application_control_owner', field_type: 'text', required: true, placeholder: 'IT Security Manager', description: 'Role/person responsible for application control' },
-      { field_name: 'application_control_solution', field_type: 'select', required: true, placeholder: 'Select application control solution', description: 'Primary application control technology used', options: ['Windows Defender Application Control', 'AppLocker', 'CrowdStrike', 'Carbon Black', 'SentinelOne', 'Other'] }
-    ],
-    evidence_requirements: [
-      { requirement_code: 'EE-1-POL', evidence_type: 'policy', description: 'Application Control Policy document defining approved applications and control mechanisms', required: true, ai_validation_prompt: 'Verify this document contains: 1) Clear definition of approved applications, 2) Process for approving new applications, 3) Technical controls to prevent unauthorized execution, 4) Roles and responsibilities, 5) Review and update procedures' }
-    ]
-  },
-  {
-    id: 'ee-2',
-    code: 'EE-2',
-    title: 'Patch Applications',
-    description: 'Patches, updates or vendor mitigations for security vulnerabilities in applications and drivers are applied within one month of release, or within 48 hours if an exploit exists.',
-    company_fields: [
-      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
-      { field_name: 'patch_management_owner', field_type: 'text', required: true, placeholder: 'IT Operations Manager', description: 'Role/person responsible for patch management' },
-      { field_name: 'patch_management_tools', field_type: 'textarea', required: true, placeholder: 'List patch management tools used (e.g., WSUS, SCCM, Intune)', description: 'Tools and systems used for patch management' }
-    ],
-    evidence_requirements: [
-      { requirement_code: 'EE-2-POL', evidence_type: 'policy', description: 'Patch Management Policy defining timelines and responsibilities', required: true, ai_validation_prompt: 'Verify policy contains: 1) Patch timelines (within 1 month, 48 hours for exploits), 2) Roles and responsibilities, 3) Risk assessment process, 4) Testing procedures, 5) Emergency patching process' }
-    ]
-  },
-  {
-    id: 'ee-3',
-    code: 'EE-3',
-    title: 'Configure Microsoft Office Macro Settings',
-    description: 'Configure Microsoft Office macro settings to block macros from the internet, and only allow vetted macros either in \'trusted locations\' with limited write access or digitally signed with a trusted certificate.',
-    company_fields: [
-      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
-      { field_name: 'office_macro_administrator', field_type: 'text', required: true, placeholder: 'IT Administrator', description: 'Role/person responsible for Office macro configuration' },
-      { field_name: 'office_versions', field_type: 'textarea', required: true, placeholder: 'List Microsoft Office versions in use (e.g., Office 365, Office 2019)', description: 'Microsoft Office versions deployed in your environment' }
-    ],
-    evidence_requirements: [
-      { requirement_code: 'EE-3-POL', evidence_type: 'policy', description: 'Microsoft Office Macro Security Policy defining macro restrictions', required: true, ai_validation_prompt: 'Verify policy mandates: 1) Block macros from internet, 2) Trusted locations with limited write access, 3) Digital signing requirements, 4) User training on macro risks, 5) Exception process' }
-    ]
-  },
-  {
-    id: 'ee-4',
-    code: 'EE-4',
-    title: 'User Application Hardening',
-    description: 'Configure web browsers to block or disable support for Flash content, ads and Java on the internet. Configure web browsers to block web content from suspicious or malicious websites.',
-    company_fields: [
-      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
-      { field_name: 'browser_administrator', field_type: 'text', required: true, placeholder: 'IT Security Administrator', description: 'Role/person responsible for browser security configuration' },
-      { field_name: 'browsers_in_use', field_type: 'textarea', required: true, placeholder: 'List browsers used (e.g., Chrome, Edge, Firefox)', description: 'Web browsers deployed in your environment' }
-    ],
-    evidence_requirements: [
-      { requirement_code: 'EE-4-POL', evidence_type: 'policy', description: 'User Application Hardening Policy defining browser security requirements', required: true, ai_validation_prompt: 'Verify policy requires: 1) Flash content blocked, 2) Java disabled on internet, 3) Ad blocking enabled, 4) Malicious website blocking, 5) Browser security configurations' }
-    ]
-  },
-  {
-    id: 'ee-5',
-    code: 'EE-5',
-    title: 'Restrict Administrative Privileges',
-    description: 'Restrict administrative privileges to operating systems and applications based on user duties. Regularly validate the use of administrative privileges.',
-    company_fields: [
-      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
-      { field_name: 'privilege_administrator', field_type: 'text', required: true, placeholder: 'Identity and Access Manager', description: 'Role/person responsible for administrative privilege management' },
-      { field_name: 'privilege_management_tools', field_type: 'textarea', required: true, placeholder: 'List tools used for privilege management (e.g., Active Directory, PAM solution)', description: 'Tools and systems used for managing administrative privileges' }
-    ],
-    evidence_requirements: [
-      { requirement_code: 'EE-5-POL', evidence_type: 'policy', description: 'Administrative Privilege Management Policy defining access controls', required: true, ai_validation_prompt: 'Verify policy includes: 1) Least privilege principle, 2) Role-based access controls, 3) Approval process for admin privileges, 4) Regular review requirements, 5) Privilege escalation procedures' }
-    ]
-  },
-  {
-    id: 'ee-6',
-    code: 'EE-6',
-    title: 'Patch Operating Systems',
-    description: 'Patches, updates or vendor mitigations for security vulnerabilities in operating systems and firmware are applied within one month of release, or within 48 hours if an exploit exists.',
-    company_fields: [
-      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
-      { field_name: 'os_patch_administrator', field_type: 'text', required: true, placeholder: 'Systems Administrator', description: 'Role/person responsible for OS patch management' },
-      { field_name: 'operating_systems', field_type: 'textarea', required: true, placeholder: 'List OS versions (e.g., Windows 10/11, Windows Server 2019/2022, Linux)', description: 'Operating systems in your environment' }
-    ],
-    evidence_requirements: [
-      { requirement_code: 'EE-6-POL', evidence_type: 'policy', description: 'Operating System Patch Management Policy defining timelines', required: true, ai_validation_prompt: 'Verify policy mandates: 1) OS patches within 1 month, 2) Critical patches within 48 hours if exploit exists, 3) Testing requirements, 4) Emergency patching process, 5) Firmware update procedures' }
-    ]
-  },
-  {
-    id: 'ee-7',
-    code: 'EE-7',
-    title: 'Multi-Factor Authentication',
-    description: 'Multi-factor authentication used for all users when authenticating to their organization\'s systems.',
-    company_fields: [
-      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
-      { field_name: 'mfa_administrator', field_type: 'text', required: true, placeholder: 'Identity and Access Manager', description: 'Role/person responsible for MFA implementation' },
-      { field_name: 'mfa_solutions', field_type: 'textarea', required: true, placeholder: 'List MFA solutions (e.g., Microsoft Authenticator, Google Authenticator, Hardware tokens)', description: 'MFA technologies and solutions implemented' }
-    ],
-    evidence_requirements: [
-      { requirement_code: 'EE-7-POL', evidence_type: 'policy', description: 'Multi-Factor Authentication Policy requiring MFA for all users', required: true, ai_validation_prompt: 'Verify policy mandates: 1) MFA for ALL users, 2) Acceptable MFA methods, 3) Enrollment requirements, 4) Exemption process (if any), 5) Regular review of MFA status' }
-    ]
-  },
-  {
-    id: 'ee-8',
-    code: 'EE-8',
-    title: 'Regular Backups',
-    description: 'Regular backups of important data, software and configuration settings are performed and tested to ensure data can be restored.',
-    company_fields: [
-      { field_name: 'company_name', field_type: 'text', required: true, placeholder: 'Enter your organization name', description: 'Legal name of your organization' },
-      { field_name: 'backup_administrator', field_type: 'text', required: true, placeholder: 'Backup Administrator', description: 'Role/person responsible for backup operations' },
-      { field_name: 'backup_solutions', field_type: 'textarea', required: true, placeholder: 'List backup solutions (e.g., Veeam, Azure Backup, AWS Backup)', description: 'Backup technologies and solutions used' }
-    ],
-    evidence_requirements: [
-      { requirement_code: 'EE-8-POL', evidence_type: 'policy', description: 'Data Backup and Recovery Policy defining backup requirements', required: true, ai_validation_prompt: 'Verify policy includes: 1) Regular backup schedules, 2) Data types to be backed up, 3) Retention requirements, 4) Testing procedures, 5) Recovery time objectives' }
-    ]
-  }
-];
+// Essential Eight Templates Data is now imported from shared data file
 
 export default function EssentialEightTemplatesPage() {
   const [controls, setControls] = useState<EssentialEightControl[]>([]);

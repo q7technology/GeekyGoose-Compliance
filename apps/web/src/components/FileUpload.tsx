@@ -197,15 +197,23 @@ export default function FileUpload({ onUploadComplete, enableControlMapping = fa
   }
 
   const startAiProcessingPolling = (uploadedFiles: UploadedFile[]) => {
+    // Filter out files without IDs
+    const validFiles = uploadedFiles.filter(file => file && file.id)
+
+    if (validFiles.length === 0) {
+      console.warn('No valid files to poll for AI processing')
+      return
+    }
+
     // Set initial AI processing status
     const initialStatus: Record<string, boolean> = {}
-    uploadedFiles.forEach(file => {
+    validFiles.forEach(file => {
       initialStatus[file.id] = false
     })
     setAiProcessingStatus(initialStatus)
-    
+
     // Process files sequentially instead of polling all at once
-    processFilesSequentially(uploadedFiles, 0)
+    processFilesSequentially(validFiles, 0)
   }
 
   const processFilesSequentially = async (uploadedFiles: UploadedFile[], currentIndex: number) => {
@@ -219,8 +227,16 @@ export default function FileUpload({ onUploadComplete, enableControlMapping = fa
     }
 
     const file = uploadedFiles[currentIndex]
+
+    // Skip if file doesn't have an ID (upload might have failed)
+    if (!file || !file.id) {
+      console.warn(`Skipping file at index ${currentIndex} - no ID found`)
+      processFilesSequentially(uploadedFiles, currentIndex + 1)
+      return
+    }
+
     setUploadStatus(`🧠 AI analyzing document ${currentIndex + 1} of ${uploadedFiles.length}: ${file.filename}`)
-    
+
     // Poll this specific file until completion
     const pollInterval = setInterval(async () => {
       try {

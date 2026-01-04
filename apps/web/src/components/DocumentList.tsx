@@ -20,6 +20,19 @@ interface Document {
   }>
 }
 
+interface Framework {
+  id: string
+  name: string
+  version: string
+}
+
+interface Control {
+  id: string
+  code: string
+  title: string
+  framework_id: string
+}
+
 interface ControlMapping {
   file_id: string
   filename: string
@@ -36,6 +49,12 @@ export default function DocumentList({ refreshTrigger }: { refreshTrigger?: numb
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [controlMappings, setControlMappings] = useState<ControlMapping[]>([])
+  const [showLinkModal, setShowLinkModal] = useState(false)
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
+  const [frameworks, setFrameworks] = useState<Framework[]>([])
+  const [controls, setControls] = useState<Control[]>([])
+  const [selectedFramework, setSelectedFramework] = useState<string>('')
+  const [selectedControls, setSelectedControls] = useState<string[]>([])
 
   const fetchDocuments = async () => {
     try {
@@ -130,6 +149,145 @@ export default function DocumentList({ refreshTrigger }: { refreshTrigger?: numb
     localStorage.setItem('document_control_mappings', JSON.stringify(updatedMappings))
   }
 
+  const isProcessingFailed = (doc: Document) => {
+    // Document is considered failed if:
+    // 1. Not AI processed AND
+    // 2. No control links AND
+    // 3. Uploaded more than 5 minutes ago
+    if (doc.ai_processed || doc.control_links.length > 0) return false
+
+    const uploadTime = new Date(doc.created_at).getTime()
+    const now = new Date().getTime()
+    const minutesSinceUpload = (now - uploadTime) / (1000 * 60)
+
+    return minutesSinceUpload > 5
+  }
+
+  const getProcessingDuration = (doc: Document) => {
+    const uploadTime = new Date(doc.created_at).getTime()
+    const now = new Date().getTime()
+    const minutes = Math.floor((now - uploadTime) / (1000 * 60))
+
+    if (minutes < 1) return 'Just now'
+    if (minutes < 60) return `${minutes} min`
+    const hours = Math.floor(minutes / 60)
+    return `${hours}h ${minutes % 60}m`
+  }
+
+  const retryProcessing = async (doc: Document) => {
+    try {
+      // Trigger a new processing attempt by calling the analyze endpoint
+      const response = await fetch('/api/analyze-documents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          document_ids: [doc.id]
+        })
+      })
+
+      if (response.ok) {
+        alert(`Retry initiated for ${doc.filename}. Processing may take a few minutes.`)
+        // Refresh documents after a short delay
+        setTimeout(() => fetchDocuments(), 2000)
+      } else {
+        throw new Error('Failed to retry processing')
+      }
+    } catch (error) {
+      console.error('Failed to retry processing:', error)
+      alert('Failed to retry processing. You can try linking manually instead.')
+    }
+  }
+
+  const openLinkModal = async (doc: Document) => {
+    setSelectedDocument(doc)
+    setShowLinkModal(true)
+
+    // Fetch frameworks if not already loaded
+    if (frameworks.length === 0) {
+      try {
+        const response = await fetch('/api/frameworks')
+        if (response.ok) {
+          const data = await response.json()
+          setFrameworks(data.frameworks)
+          if (data.frameworks.length > 0) {
+            setSelectedFramework(data.frameworks[0].id)
+            fetchControls(data.frameworks[0].id)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch frameworks:', error)
+      }
+    } else if (selectedFramework) {
+      fetchControls(selectedFramework)
+    }
+  }
+
+  const fetchControls = async (frameworkId: string) => {
+    try {
+      const response = await fetch(`/api/frameworks/${frameworkId}/controls`)
+      if (response.ok) {
+        const data = await response.json()
+        setControls(data.controls)
+      }
+    } catch (error) {
+      console.error('Failed to fetch controls:', error)
+    }
+  }
+
+  const handleFrameworkChange = (frameworkId: string) => {
+    setSelectedFramework(frameworkId)
+    setSelectedControls([])
+    fetchControls(frameworkId)
+  }
+
+  const toggleControlSelection = (controlId: string) => {
+    setSelectedControls(prev =>
+      prev.includes(controlId)
+        ? prev.filter(id => id !== controlId)
+        : [...prev, controlId]
+    )
+  }
+
+  const linkSelectedControls = async () => {
+    if (!selectedDocument || selectedControls.length === 0) return
+
+    try {
+      // Link each selected control to the document via the API
+      for (const controlId of selectedControls) {
+        const response = await fetch(`/api/documents/${selectedDocument.id}/link-evidence`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            control_id: controlId,
+            requirement_id: null,
+            note: 'Manually linked'
+          })
+        })
+
+        if (!response.ok) {
+          const error = await response.json()
+          // Skip if already linked
+          if (!error.detail?.includes('already exists')) {
+            throw new Error(error.detail || 'Failed to link control')
+          }
+        }
+      }
+
+      // Refresh documents
+      await fetchDocuments()
+
+      // Close modal
+      setShowLinkModal(false)
+      setSelectedDocument(null)
+      setSelectedControls([])
+
+      alert(`Successfully linked ${selectedControls.length} control(s) to ${selectedDocument.filename}`)
+    } catch (error) {
+      console.error('Failed to link controls:', error)
+      alert(`Failed to link controls: ${error instanceof Error ? error.message : 'Please try again.'}`)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -179,15 +337,44 @@ export default function DocumentList({ refreshTrigger }: { refreshTrigger?: numb
                     
                     {/* AI Processing Status */}
                     <div className="flex items-center justify-between mt-2">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         {doc.ai_processed ? (
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             🧠 AI Analyzed
                           </span>
+                        ) : isProcessingFailed(doc) ? (
+                          <>
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                              ❌ Failed ({getProcessingDuration(doc)})
+                            </span>
+                            <button
+                              onClick={() => retryProcessing(doc)}
+                              className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-orange-600 text-white hover:bg-orange-700"
+                              title="Retry AI processing (useful for OCR failures)"
+                            >
+                              🔄 Retry
+                            </button>
+                            <button
+                              onClick={() => openLinkModal(doc)}
+                              className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-600 text-white hover:bg-blue-700"
+                              title="Manually select controls to link"
+                            >
+                              🔗 Link Manually
+                            </button>
+                          </>
                         ) : (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                            ⏳ Processing
-                          </span>
+                          <>
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                              ⏳ Processing ({getProcessingDuration(doc)})
+                            </span>
+                            <button
+                              onClick={() => fetchDocuments()}
+                              className="inline-flex items-center px-1.5 py-0.5 rounded text-xs text-orange-700 hover:text-orange-900 hover:bg-orange-50"
+                              title="Refresh status"
+                            >
+                              ↻
+                            </button>
+                          </>
                         )}
                       </div>
                       
@@ -330,6 +517,114 @@ export default function DocumentList({ refreshTrigger }: { refreshTrigger?: numb
           </div>
         ))}
       </div>
+
+      {/* Manual Linking Modal */}
+      {showLinkModal && selectedDocument && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Link Controls to {selectedDocument.filename}
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowLinkModal(false)
+                    setSelectedDocument(null)
+                    setSelectedControls([])
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <p className="text-sm text-gray-600 mt-2">
+                Select the controls that this document provides evidence for.
+              </p>
+            </div>
+
+            <div className="p-6 flex-1 overflow-y-auto">
+              {/* Framework Selection */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Framework
+                </label>
+                <select
+                  value={selectedFramework}
+                  onChange={(e) => handleFrameworkChange(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                >
+                  {frameworks.map((fw) => (
+                    <option key={fw.id} value={fw.id}>
+                      {fw.name} {fw.version ? `(${fw.version})` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Controls List */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Controls ({selectedControls.length} selected)
+                </label>
+                {controls.length === 0 ? (
+                  <p className="text-sm text-gray-500">Loading controls...</p>
+                ) : (
+                  <div className="max-h-96 overflow-y-auto space-y-1">
+                    {controls.map((control) => (
+                      <label
+                        key={control.id}
+                        className="flex items-start p-3 bg-gray-50 hover:bg-gray-100 rounded cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedControls.includes(control.id)}
+                          onChange={() => toggleControlSelection(control.id)}
+                          className="mt-1 mr-3"
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium text-sm text-gray-900">
+                            {control.code}
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            {control.title}
+                          </div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowLinkModal(false)
+                  setSelectedDocument(null)
+                  setSelectedControls([])
+                }}
+                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={linkSelectedControls}
+                disabled={selectedControls.length === 0}
+                className={`px-4 py-2 text-sm font-medium rounded-md text-white ${
+                  selectedControls.length === 0
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                }`}
+              >
+                Link {selectedControls.length} Control{selectedControls.length !== 1 ? 's' : ''}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
