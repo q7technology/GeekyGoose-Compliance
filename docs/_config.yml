@@ -2,7 +2,7 @@
 title: GeekyGoose Compliance
 description: Enterprise-Grade AI-Powered Compliance Automation Platform
 baseurl: "/GeekyGoose-Compliance-Community" # the subpath of your site, e.g. /blog
-url: "https://github.com/q7technology" # the base hostname & protocol for your site
+url: "q7technology.github.io" # the base hostname & protocol for your site
 
 # Build settings
 theme: jekyll-theme-cayman
