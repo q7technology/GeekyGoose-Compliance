@@ -274,6 +274,62 @@ Contributors will be recognized in the following ways:
 - **Pair Programming**: Video sessions with experienced contributors
 - **Code Reviews**: Detailed feedback for learning opportunities
 
+## 📜 Contributor License Agreement (CLA) / Developer Certificate of Origin (DCO)
+
+### **Developer Certificate of Origin (DCO)**
+
+This project uses the [Developer Certificate of Origin (DCO)](https://developercertificate.org/) process to ensure that contributions can be legally included in the project.
+
+By contributing to GeekyGoose Compliance, you certify that:
+
+1. The contribution was created in whole or in part by you and you have the right to submit it under the AGPLv3 license; or
+2. The contribution is based upon previous work that, to the best of your knowledge, is covered under an appropriate open source license and you have the right under that license to submit that work with modifications; or
+3. The contribution was provided directly to you by some other person who certified (1) or (2) and you have not modified it.
+
+### **How to Sign Off on Your Commits**
+
+To indicate that you agree to the DCO for your contributions, you must sign off on all commits using the `-s` or `--signoff` flag:
+
+```bash
+git commit -s -m "Add new compliance framework support"
+```
+
+This adds a "Signed-off-by" line to your commit message:
+
+```
+Add new compliance framework support
+
+Signed-off-by: Your Name <your.email@example.com>
+```
+
+### **Automated DCO Checks**
+
+All pull requests are automatically checked for DCO sign-off. If any commits are missing the sign-off, the PR will be blocked until all commits are signed off.
+
+To sign off on previous commits:
+```bash
+# Sign off on the last commit
+git commit --amend --signoff
+
+# Sign off on multiple commits (interactive rebase)
+git rebase HEAD~3 --signoff
+```
+
+### **Full CLA (For Significant Contributions)**
+
+For significant contributions (major features, large refactors, architectural changes), we may request a full Contributor License Agreement (CLA). This ensures:
+- Legal clarity for contributions
+- Ability to relicense if needed (e.g., for commercial licensing)
+- Protection for both contributors and the project
+
+If a CLA is required, we will contact you during the pull request review process.
+
+### **Questions About Licensing?**
+
+If you have questions about the DCO, CLA, or contribution licensing:
+- **Email**: legal@geekygoose.io
+- **GitHub Discussions**: Ask in our community discussions
+
 ## 📜 Code of Conduct
 
 Please note that this project is released with a [Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project, you agree to abide by its terms. We are committed to providing a welcoming and inclusive experience for all contributors.

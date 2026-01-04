@@ -1,0 +1,147 @@
+GeekyGoose Compliance
+Copyright (C) 2025-2026 GeekyGoose Compliance Contributors
+
+This product includes software developed by the GeekyGoose Compliance project
+and its contributors.
+
+================================================================================
+
+AGPLV3 LICENSE NOTICE
+================================================================================
+
+This software is licensed under the GNU Affero General Public License v3.0
+(AGPLv3). You may obtain a copy of the License at:
+
+    https://www.gnu.org/licenses/agpl-3.0.html
+
+The AGPLv3 license applies to all files in this repository unless otherwise
+noted. If you use this software over a network (e.g., as a web service), you
+must make the source code available to users of that service.
+
+For commercial licensing options that do not require AGPLv3 compliance, please
+see COMMERCIAL_LICENSE.md or contact: licensing@geekygoose.io
+
+================================================================================
+
+COPYRIGHT NOTICES
+================================================================================
+
+This section contains copyright notices for this software and its contributors.
+
+Main Copyright:
+  Copyright (C) 2025-2026 GeekyGoose Compliance Contributors
+  Licensed under AGPLv3
+
+Individual file copyright headers should be in the following format:
+
+  /*
+   * GeekyGoose Compliance - [Component Name]
+   * Copyright (C) 2025-2026 GeekyGoose Compliance Contributors
+   *
+   * This file is part of GeekyGoose Compliance.
+   *
+   * GeekyGoose Compliance is free software: you can redistribute it and/or
+   * modify it under the terms of the GNU Affero General Public License as
+   * published by the Free Software Foundation, either version 3 of the
+   * License, or (at your option) any later version.
+   *
+   * GeekyGoose Compliance is distributed in the hope that it will be useful,
+   * but WITHOUT ANY WARRANTY; without even the implied warranty of
+   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   * GNU Affero General Public License for more details.
+   *
+   * You should have received a copy of the GNU Affero General Public License
+   * along with GeekyGoose Compliance. If not, see
+   * <https://www.gnu.org/licenses/>.
+   */
+
+For Python files (.py):
+  # GeekyGoose Compliance - [Component Name]
+  # Copyright (C) 2025-2026 GeekyGoose Compliance Contributors
+  #
+  # This file is part of GeekyGoose Compliance.
+  #
+  # GeekyGoose Compliance is free software: you can redistribute it and/or
+  # modify it under the terms of the GNU Affero General Public License as
+  # published by the Free Software Foundation, either version 3 of the
+  # License, or (at your option) any later version.
+  #
+  # GeekyGoose Compliance is distributed in the hope that it will be useful,
+  # but WITHOUT ANY WARRANTY; without even the implied warranty of
+  # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  # GNU Affero General Public License for more details.
+  #
+  # You should have received a copy of the GNU Affero General Public License
+  # along with GeekyGoose Compliance. If not, see
+  # <https://www.gnu.org/licenses/>.
+
+================================================================================
+
+THIRD-PARTY COMPONENTS
+================================================================================
+
+This software includes or depends on the following third-party components:
+
+Frontend Dependencies:
+  - Next.js (MIT License) - https://nextjs.org/
+  - React (MIT License) - https://react.dev/
+  - Tailwind CSS (MIT License) - https://tailwindcss.com/
+  - shadcn/ui (MIT License) - https://ui.shadcn.com/
+
+Backend Dependencies:
+  - FastAPI (MIT License) - https://fastapi.tiangolo.com/
+  - PostgreSQL (PostgreSQL License) - https://www.postgresql.org/
+  - Python (PSF License) - https://www.python.org/
+
+AI/ML Dependencies:
+  - Ollama (MIT License) - https://ollama.com/
+  - OpenAI SDK (Apache 2.0) - https://github.com/openai/openai-python
+
+Infrastructure:
+  - Docker (Apache 2.0) - https://www.docker.com/
+  - MinIO (AGPLv3) - https://min.io/
+  - Redis (BSD 3-Clause) - https://redis.io/
+  - Celery (BSD License) - https://docs.celeryproject.org/
+
+For a complete list of dependencies and their licenses, please refer to:
+  - Frontend: apps/web/package.json
+  - Backend: apps/api/requirements.txt
+
+All third-party components retain their original licenses and copyrights.
+
+================================================================================
+
+TRADEMARKS
+================================================================================
+
+"GeekyGoose" and the GeekyGoose logo are trademarks of the GeekyGoose Compliance
+project. See TRADEMARK.md for usage guidelines.
+
+The GeekyGoose name and logo may not be used to endorse or promote products
+derived from this software without specific prior written permission.
+
+================================================================================
+
+CONTRIBUTOR AGREEMENT
+================================================================================
+
+By contributing to this project, you agree to license your contributions under
+the same license as the project (AGPLv3) and represent that you have the right
+to do so.
+
+For more information, see CONTRIBUTING.md.
+
+================================================================================
+
+CONTACT INFORMATION
+================================================================================
+
+Project Website: https://geekygoose.io
+GitHub: https://github.com/ggcompli/GeekyGoose-Compliance
+Email: info@geekygoose.io
+Commercial Licensing: licensing@geekygoose.io
+
+================================================================================
+
+This notice must be preserved in all copies or substantial portions of the
+software.

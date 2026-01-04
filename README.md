@@ -2,7 +2,7 @@
 
 > **Get Compliant Fast** - Enterprise-Grade AI-Powered Compliance Automation Platform
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![License](https://img.shields.io/badge/license-AGPLv3-blue.svg)
 ![Version](https://img.shields.io/badge/version-0.3.0-green.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.1-black?logo=next.js&logoColor=white)
@@ -576,7 +576,76 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Dual-License Model
+
+GeekyGoose Compliance is available under a **dual-licensing model**:
+
+#### 1. **Community Edition - AGPLv3**
+
+The Community Edition is licensed under the **GNU Affero General Public License v3.0 (AGPLv3)**.
+
+- ✅ **Free and Open Source**: Use, modify, and distribute the code freely
+- ✅ **Perfect for**: Self-hosted deployments, internal use, open-source projects
+- ⚠️ **Network Copyleft**: If you run this as a web service, you must provide source code to your users
+- ⚠️ **Derivative Works**: Must also be licensed under AGPLv3
+
+See the [LICENSE](LICENSE) file for the full AGPLv3 text.
+
+**What this means for you:**
+- **Self-Hosted/Internal Use**: You can use GeekyGoose Compliance within your organization for internal compliance management under AGPLv3.
+- **Modifications**: If you modify the software and use it over a network (e.g., web service), you must make your modified source code available to users under AGPLv3.
+- **Contributing**: All contributions are licensed under AGPLv3 (see [CONTRIBUTING.md](CONTRIBUTING.md) for details).
+
+#### 2. **Enterprise/Hosted - Commercial License**
+
+If you want to use GeekyGoose Compliance **without AGPL obligations**, you can purchase a **commercial license**.
+
+**You need a commercial license if you want to:**
+- 🏢 **Run as a hosted/SaaS service** without providing source code to users
+- 🔒 **Keep your modifications private** (no source code disclosure)
+- 📦 **Embed in proprietary software** without open-sourcing your application
+- ⚖️ **Avoid copyleft obligations** for any reason
+
+**Commercial License Benefits:**
+- No source code disclosure requirements
+- No copyleft obligations
+- Priority support and SLA guarantees
+- Custom development and integrations
+- Legal indemnification and warranty coverage
+- White-label and OEM options available
+
+**Pricing & Contact:**
+- **Email**: licensing@geekygoose.io
+- **Website**: https://geekygoose.io/commercial-license
+- See [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md) for details
+
+### Choosing the Right License
+
+| Use Case | Community (AGPLv3) | Commercial License |
+|----------|-------------------|-------------------|
+| Internal company use | ✅ Yes | Optional |
+| Self-hosted deployment | ✅ Yes | Optional |
+| Modify for internal use | ✅ Yes (must share if networked) | ✅ Yes (private modifications) |
+| Offer as SaaS/hosted service | ⚠️ Must share source code | ✅ Yes (no sharing required) |
+| Embed in proprietary product | ❌ No | ✅ Yes |
+| Keep modifications private | ❌ No | ✅ Yes |
+
+### Trademark Notice
+
+The **GeekyGoose name and logo** are trademarks and are **NOT** covered by the AGPLv3 license.
+
+- ✅ You **CAN** use the code freely under AGPLv3
+- ❌ You **CANNOT** use the GeekyGoose name or logo without permission
+
+See [TRADEMARK.md](TRADEMARK.md) for detailed trademark usage guidelines.
+
+### Additional Legal Documents
+
+- **[LICENSE](LICENSE)** - Full AGPLv3 license text
+- **[COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md)** - Commercial licensing options and pricing
+- **[NOTICE](NOTICE)** - Copyright notices and third-party attributions
+- **[TRADEMARK.md](TRADEMARK.md)** - Trademark usage policy
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines and DCO/CLA process
 
 ## 🙏 Acknowledgments
 
