@@ -1,20 +1,28 @@
 # Site settings
 title: GeekyGoose Compliance
-description: Enterprise-Grade AI-Powered Compliance Automation Platform
-baseurl: "/GeekyGoose-Compliance-Community" # the subpath of your site, e.g. /blog
-url: "q7technology.github.io" # the base hostname & protocol for your site
+description: Enterprise‑grade, AI‑powered compliance automation.
+url: "https://q7technology.github.io"
+baseurl: "/GeekyGoose-Compliance-Community"
 
 # Build settings
-theme: jekyll-theme-cayman
+theme: null
 markdown: kramdown
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
 
+# Sass
+sass:
+  sass_dir: assets/css
+  style: compressed
+
+# Repo metadata (used by jekyll-seo-tag and links)
+repository: q7technology/GeekyGoose-Compliance-Community
+
 # Navigation
 nav_links:
   - title: Home
-    url: /comp.geekygoose.io
+    url: /
   - title: License
     url: /license
   - title: Commercial
@@ -23,24 +31,10 @@ nav_links:
     url: /trademark
   - title: Contributing
     url: /contributing
-  - title: Documentation
-    url: /docs
-
-# Social links
-github_username: ggcompli
-repository: ggcompli/GeekyGoose-Compliance
-
-# SEO
-logo: /assets/images/logo.png
-twitter:
-  username: geekygoose
-  card: summary
-
-# Collections
-collections:
-  docs:
-    output: true
-    permalink: /docs/:path/
+  - title: Network
+    url: /network-architecture
+  - title: GitHub
+    url: https://github.com/q7technology/GeekyGoose-Compliance-Community
 
 # Defaults
 defaults:
@@ -55,4 +49,3 @@ exclude:
   - Gemfile.lock
   - node_modules
   - vendor
-  - README.md

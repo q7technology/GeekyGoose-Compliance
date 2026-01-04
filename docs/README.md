@@ -1,3 +1,8 @@
+---
+layout: default
+title: Docs
+---
+
 # GeekyGoose Compliance - GitHub Pages Documentation
 
 This directory contains the source files for the GeekyGoose Compliance documentation website, which is hosted on GitHub Pages.

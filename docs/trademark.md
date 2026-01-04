@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Trademark Policy
+title: Trademark
 ---
 
 # Trademark Policy
@@ -291,10 +291,3 @@ If you have questions about this trademark policy or are unsure whether your use
 </p>
 
 ---
-
-<p style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 1px solid #e1e4e8;">
-<a href="/" style="margin: 0 15px;">← Back to Home</a> |
-<a href="license" style="margin: 0 15px;">License Information</a> |
-<a href="commercial" style="margin: 0 15px;">Commercial License</a> |
-<a href="contributing" style="margin: 0 15px;">Contributing →</a>
-</p>

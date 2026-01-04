@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Commercial License
+title: Commercial
 ---
 
 # Commercial License
@@ -403,9 +403,3 @@ Support varies by license tier:
 **Last Updated:** January 2026 | **Version:** 1.0
 
 ---
-
-<p style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 1px solid #e1e4e8;">
-<a href="/" style="margin: 0 15px;">← Back to Home</a> |
-<a href="license" style="margin: 0 15px;">License Information</a> |
-<a href="trademark" style="margin: 0 15px;">Trademark Policy →</a>
-</p>

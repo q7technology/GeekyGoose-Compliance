@@ -170,9 +170,3 @@ Commercial licenses include priority support with SLAs.
 - 💬 [GitHub Discussions](https://github.com/ggcompli/GeekyGoose-Compliance/discussions)
 
 ---
-
-<p style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 1px solid #e1e4e8;">
-<a href="/" style="margin: 0 15px;">← Back to Home</a> |
-<a href="commercial" style="margin: 0 15px;">Commercial License →</a> |
-<a href="trademark" style="margin: 0 15px;">Trademark Policy →</a>
-</p>
