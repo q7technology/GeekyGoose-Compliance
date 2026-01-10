@@ -879,7 +879,7 @@ export default function FillTemplatePage() {
                                     onChange={(e) => {
                                       const key = `${req.requirement_code}-${doc.id}`;
                                       if (e.target.checked) {
-                                        setSelectedDocuments(prev => new Set([...prev, key]));
+                                        setSelectedDocuments(prev => new Set([...Array.from(prev), key]));
                                         setEvidenceUploads(prev => ({
                                           ...prev,
                                           [req.requirement_code]: {
