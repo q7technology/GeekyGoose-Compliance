@@ -31,7 +31,7 @@ export default function DocumentsPage() {
                 Upload Documents
               </h2>
               <div className="bg-white p-6 rounded-lg border border-gray-200">
-                <FileUpload onUploadComplete={handleUploadComplete} enableControlMapping={true} />
+                <FileUpload onUploadComplete={handleUploadComplete} />
               </div>
             </div>
 

@@ -40,7 +40,11 @@ def create_chat_completion_safe(client, model, messages, temperature=None):
 client = None
 
 def get_vision_clients_for_dual_validation():
-    """Get both OpenAI and Ollama vision clients for dual validation."""
+    """Get vision clients for dual validation.
+
+    Dual vision validation requires BOTH OpenAI and Ollama to be properly configured.
+    If only one provider is configured, returns empty dict to signal dual mode is unavailable.
+    """
     db = SessionLocal()
     try:
         settings = db.query(Settings).filter(Settings.id == 1).first()
@@ -49,40 +53,59 @@ def get_vision_clients_for_dual_validation():
 
         clients = {}
 
+        # Check if OpenAI is properly configured (has valid API key)
+        openai_configured = bool(settings.openai_api_key and settings.openai_api_key != 'your_openai_api_key_here')
+
+        # Check if Ollama is properly configured
+        ollama_configured = bool(settings.ollama_endpoint)
+
+        # Dual vision requires BOTH providers to be configured
+        if not (openai_configured and ollama_configured):
+            if not openai_configured and ollama_configured:
+                logger.info("Dual vision unavailable: OpenAI not configured (no API key). Using Ollama single model mode.")
+            elif openai_configured and not ollama_configured:
+                logger.info("Dual vision unavailable: Ollama not configured. Using OpenAI single model mode.")
+            else:
+                logger.info("Dual vision unavailable: Neither OpenAI nor Ollama properly configured.")
+            return clients
+
         # Get OpenAI GPT-4o client
-        if settings.openai_api_key:
-            try:
-                from openai import OpenAI
-                clients['openai'] = {
-                    'client': OpenAI(
-                        api_key=settings.openai_api_key,
-                        base_url=settings.openai_endpoint
-                    ),
-                    'model': settings.openai_vision_model or 'gpt-4o',
-                    'type': 'openai'
+        try:
+            from openai import OpenAI
+            clients['openai'] = {
+                'client': OpenAI(
+                    api_key=settings.openai_api_key,
+                    base_url=settings.openai_endpoint
+                ),
+                'model': settings.openai_vision_model or 'gpt-4o',
+                'type': 'openai'
+            }
+            logger.info(f"Initialized OpenAI vision client with model {clients['openai']['model']}")
+        except Exception as e:
+            logger.error(f"Failed to initialize OpenAI vision client: {e}")
+            return {}  # Can't do dual vision without OpenAI
+
+        # Get Ollama vision client
+        try:
+            import requests
+            endpoint = settings.ollama_endpoint
+            model = settings.ollama_vision_model or 'qwen2-vl'
+
+            # Test connection
+            response = requests.get(f"{endpoint}/api/tags", timeout=5)
+            if response.status_code == 200:
+                clients['ollama'] = {
+                    'endpoint': endpoint,
+                    'model': model,
+                    'type': 'ollama'
                 }
-                logger.info(f"Initialized OpenAI vision client with model {clients['openai']['model']}")
-            except Exception as e:
-                logger.error(f"Failed to initialize OpenAI vision client: {e}")
-
-        # Get Ollama Qwen2-VL client
-        if settings.ollama_endpoint:
-            try:
-                import requests
-                endpoint = settings.ollama_endpoint
-                model = settings.ollama_vision_model or 'qwen2-vl'
-
-                # Test connection
-                response = requests.get(f"{endpoint}/api/tags", timeout=5)
-                if response.status_code == 200:
-                    clients['ollama'] = {
-                        'endpoint': endpoint,
-                        'model': model,
-                        'type': 'ollama'
-                    }
-                    logger.info(f"Initialized Ollama vision client with model {model}")
-            except Exception as e:
-                logger.error(f"Failed to initialize Ollama vision client: {e}")
+                logger.info(f"Initialized Ollama vision client with model {model}")
+            else:
+                logger.error(f"Ollama connection test failed: {response.status_code}")
+                return {}  # Can't do dual vision without Ollama
+        except Exception as e:
+            logger.error(f"Failed to initialize Ollama vision client: {e}")
+            return {}  # Can't do dual vision without Ollama
 
         return clients
     finally:

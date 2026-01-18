@@ -119,7 +119,7 @@ class DocumentPage(Base):
 
 class EvidenceLink(Base):
     __tablename__ = "evidence_links"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     org_id = Column(UUID(as_uuid=True), ForeignKey("orgs.id"), nullable=False)
     control_id = Column(UUID(as_uuid=True), ForeignKey("controls.id"), nullable=False)
@@ -128,7 +128,15 @@ class EvidenceLink(Base):
     note = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
-    
+
+    # Performance: Add indexes for evidence link queries
+    __table_args__ = (
+        Index('idx_evidence_link_control_id', 'control_id'),
+        Index('idx_evidence_link_document_id', 'document_id'),
+        Index('idx_evidence_link_org_id', 'org_id'),
+        Index('idx_evidence_link_requirement_id', 'requirement_id'),
+    )
+
     org = relationship("Org")
     control = relationship("Control")
     requirement = relationship("Requirement")
@@ -172,6 +180,14 @@ class Scan(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
 
+    # Performance: Add indexes for scan queries
+    __table_args__ = (
+        Index('idx_scan_org_id', 'org_id'),
+        Index('idx_scan_control_id', 'control_id'),
+        Index('idx_scan_status', 'status'),
+        Index('idx_scan_created_at', 'created_at'),
+    )
+
     org = relationship("Org")
     control = relationship("Control")
     results = relationship("ScanResult", back_populates="scan")
@@ -179,7 +195,7 @@ class Scan(Base):
 
 class ScanResult(Base):
     __tablename__ = "scan_results"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     scan_id = Column(UUID(as_uuid=True), ForeignKey("scans.id"), nullable=False)
     requirement_id = Column(UUID(as_uuid=True), ForeignKey("requirements.id"), nullable=False)
@@ -188,20 +204,33 @@ class ScanResult(Base):
     rationale_json = Column(Text)  # JSON string
     citations_json = Column(Text)  # JSON string
     created_at = Column(DateTime, default=datetime.utcnow)
-    
+
+    # Performance: Add indexes for scan result queries
+    __table_args__ = (
+        Index('idx_scan_result_scan_id', 'scan_id'),
+        Index('idx_scan_result_requirement_id', 'requirement_id'),
+        Index('idx_scan_result_outcome', 'outcome'),
+    )
+
     scan = relationship("Scan", back_populates="results")
     requirement = relationship("Requirement")
 
 class Gap(Base):
     __tablename__ = "gaps"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     scan_id = Column(UUID(as_uuid=True), ForeignKey("scans.id"), nullable=False)
     requirement_id = Column(UUID(as_uuid=True), ForeignKey("requirements.id"), nullable=False)
     gap_summary = Column(Text, nullable=False)
     recommended_actions_json = Column(Text)  # JSON string
     created_at = Column(DateTime, default=datetime.utcnow)
-    
+
+    # Performance: Add indexes for gap queries
+    __table_args__ = (
+        Index('idx_gap_scan_id', 'scan_id'),
+        Index('idx_gap_requirement_id', 'requirement_id'),
+    )
+
     scan = relationship("Scan", back_populates="gaps")
     requirement = relationship("Requirement")
 
