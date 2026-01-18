@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { FileText, Shield, CheckCircle2, TrendingUp, Lock, FileCheck, Sparkles } from 'lucide-react'
+import { FileText, Shield, CheckCircle2, TrendingUp, Lock, FileCheck, Sparkles, Network, Crown } from 'lucide-react'
 
 export default function Home() {
   return (
@@ -24,7 +24,7 @@ export default function Home() {
           </div>
 
           {/* Main Feature Cards */}
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <Link href="/documents" className="group">
               <div className="bg-white p-8 rounded-2xl border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-4">
@@ -66,6 +66,28 @@ export default function Home() {
                 </p>
               </div>
             </Link>
+
+            <div className="group relative">
+              <div className="bg-white p-8 rounded-2xl border border-gray-200 hover:border-amber-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="absolute top-4 right-4">
+                  <span className="inline-flex items-center gap-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                    <Crown className="w-3 h-3" />
+                    Premium
+                  </span>
+                </div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl">
+                    <Network className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-amber-600 transition-colors">
+                  Network Scanning
+                </h2>
+                <p className="text-gray-600 leading-relaxed">
+                  Network vulnerability and compliance scanning with automated discovery and security assessment
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Essential Eight Framework Section */}

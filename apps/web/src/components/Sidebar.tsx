@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Home, FileText, Shield, FileStack, Send, BarChart3, Settings } from 'lucide-react';
+import { Home, FileText, Shield, FileStack, Send, BarChart3, Settings, Network, Crown } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: Home },
@@ -12,6 +12,7 @@ const navigation = [
   { name: 'Templates', href: '/templates', icon: FileStack },
   { name: 'Submissions', href: '/submissions', icon: Send },
   { name: 'Reports', href: '/reports', icon: BarChart3 },
+  { name: 'Network Scanning', href: '/network-scanning', icon: Network, premium: true },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
@@ -75,12 +76,19 @@ export default function Sidebar() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50'
+                    ? item.premium
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/50'
+                      : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50'
                     : 'text-gray-300 hover:bg-slate-700/50 hover:text-white'
                 }`}
               >
                 <Icon className="w-5 h-5" />
-                {item.name}
+                <span className="flex-1">{item.name}</span>
+                {item.premium && (
+                  <span className="flex items-center gap-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white px-2 py-0.5 rounded-full text-xs font-semibold">
+                    <Crown className="w-3 h-3" />
+                  </span>
+                )}
               </Link>
             );
           })}
