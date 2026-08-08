@@ -21,7 +21,7 @@ interface AISettings {
 export default function SettingsPage() {
   const [settings, setSettings] = useState<AISettings>({
     provider: 'openai',
-    openai_model: 'gpt-4o-mini',
+    openai_model: 'gpt-5.6-terra',
     ollama_endpoint: 'http://172.16.0.11:11434',
     ollama_model: 'llama2',
     ollama_context_size: 32768
@@ -229,7 +229,7 @@ export default function SettingsPage() {
           </p>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">AI Provider Configuration</h2>
           </div>
@@ -253,7 +253,7 @@ export default function SettingsPage() {
                     <div className="text-2xl">🤖</div>
                     <div>
                       <h3 className="font-medium text-gray-900">OpenAI</h3>
-                      <p className="text-sm text-gray-600">GPT-4, GPT-3.5 Turbo</p>
+                      <p className="text-sm text-gray-600">GPT-5.6 Sol, Terra &amp; Luna</p>
                       <p className="text-xs text-gray-500 mt-1">Requires API key and credits</p>
                     </div>
                   </div>
@@ -340,21 +340,22 @@ export default function SettingsPage() {
                     </select>
                   ) : (
                     <select
-                      value={settings.openai_model || 'gpt-4o-mini'}
+                      value={settings.openai_model || 'gpt-5.6-terra'}
                       onChange={(e) => setSettings({ ...settings, openai_model: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
-                      <option value="gpt-4o-mini">GPT-4o Mini (Recommended)</option>
-                      <option value="gpt-4o">GPT-4o</option>
-                      <option value="gpt-4-turbo">GPT-4 Turbo</option>
-                      <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                      <option value="gpt-5.6-terra">GPT-5.6 Terra (Recommended)</option>
+                      <option value="gpt-5.6-sol">GPT-5.6 Sol (Highest quality)</option>
+                      <option value="gpt-5.6-luna">GPT-5.6 Luna (Budget)</option>
+                      <option value="gpt-4o">GPT-4o (Legacy)</option>
+                      <option value="gpt-4o-mini">GPT-4o Mini (Legacy)</option>
                     </select>
                   )}
                   
                   <div className="mt-2 space-y-1">
                     {!settings.openai_endpoint ? (
                       <p className="text-xs text-gray-500">
-                        GPT-4o Mini offers the best balance of cost and quality for compliance analysis
+                        GPT-5.6 Terra offers the best balance of cost and quality for compliance analysis; Luna is ~10× cheaper for high-volume scanning
                       </p>
                     ) : openaiModels.length > 0 ? (
                       <p className="text-xs text-green-600">
@@ -389,16 +390,17 @@ export default function SettingsPage() {
                     Vision Model (for images & PDFs)
                   </label>
                   <select
-                    value={settings.openai_vision_model || 'gpt-4o'}
+                    value={settings.openai_vision_model || 'gpt-5.6-terra'}
                     onChange={(e) => setSettings({ ...settings, openai_vision_model: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="gpt-4o">GPT-4o (Recommended)</option>
-                    <option value="gpt-4o-mini">GPT-4o Mini</option>
-                    <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                    <option value="gpt-5.6-terra">GPT-5.6 Terra (Recommended)</option>
+                    <option value="gpt-5.6-sol">GPT-5.6 Sol (Highest quality)</option>
+                    <option value="gpt-5.6-luna">GPT-5.6 Luna (Budget)</option>
+                    <option value="gpt-4o">GPT-4o (Legacy)</option>
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
-                    GPT-4o offers the best vision capabilities for analyzing images and PDF documents
+                    All GPT-5.6 models support vision; Sol offers the strongest analysis of complex images and PDF documents
                   </p>
                 </div>
               </div>
@@ -604,7 +606,7 @@ export default function SettingsPage() {
               </div>
 
               {/* Dual Vision Validation Toggle */}
-              <div className="p-3 bg-white rounded-lg border border-purple-200">
+              <div className="p-3 bg-surface rounded-lg border border-purple-200">
                 <div className="flex items-start gap-3">
                   <input
                     type="checkbox"
@@ -617,7 +619,7 @@ export default function SettingsPage() {
                     <label htmlFor="dual-vision" className="cursor-pointer">
                       <span className="font-medium text-gray-900">🔬 Dual Vision Validation (Ultra Accuracy)</span>
                       <p className="text-sm text-gray-600 mt-1">
-                        Use <strong>both</strong> OpenAI vision model ({settings.openai_vision_model || 'gpt-4o'}) AND Ollama vision model ({settings.ollama_vision_model || 'qwen2-vl'}) together. Only creates links if <strong>both models agree</strong> on the same control. Uses minimum confidence from both models.
+                        Use <strong>both</strong> OpenAI vision model ({settings.openai_vision_model || 'gpt-5.6-terra'}) AND Ollama vision model ({settings.ollama_vision_model || 'qwen2-vl'}) together. Only creates links if <strong>both models agree</strong> on the same control. Uses minimum confidence from both models.
                       </p>
                       <div className="mt-2 text-xs space-y-1">
                         <div className="flex items-center gap-2">
@@ -682,7 +684,7 @@ export default function SettingsPage() {
                 className={`inline-flex items-center px-6 py-2 border border-transparent text-base font-medium rounded-md text-white ${
                   saving
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
+                    : 'bg-blue-600 hover:bg-blue-400'
                 }`}
               >
                 {saving ? (
@@ -705,7 +707,7 @@ export default function SettingsPage() {
             <div>
               <h3 className="font-medium text-yellow-800">Pro Tip</h3>
               <p className="text-sm text-yellow-700 mt-1">
-                For better compliance analysis, we recommend using larger models like GPT-4o or Llama 3. 
+                For better compliance analysis, we recommend using larger models like GPT-5.6 Sol or Qwen 2.5 14B+. 
                 Smaller models may provide less accurate results for complex compliance requirements.
               </p>
             </div>

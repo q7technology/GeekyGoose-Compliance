@@ -356,23 +356,23 @@ export default function ReportsPage() {
 
         {/* Summary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="bg-surface p-4 rounded-lg border border-gray-200">
             <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
             <div className="text-sm text-gray-600">Total Controls</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="bg-surface p-4 rounded-lg border border-gray-200">
             <div className="text-2xl font-bold text-blue-600">{stats.scanned}</div>
             <div className="text-sm text-gray-600">Scanned</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="bg-surface p-4 rounded-lg border border-gray-200">
             <div className="text-2xl font-bold text-green-600">{stats.passed}</div>
             <div className="text-sm text-gray-600">Compliant</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="bg-surface p-4 rounded-lg border border-gray-200">
             <div className="text-2xl font-bold text-red-600">{stats.failed}</div>
             <div className="text-sm text-gray-600">Non-Compliant</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="bg-surface p-4 rounded-lg border border-gray-200">
             <div className="text-2xl font-bold text-purple-600">{stats.totalGaps}</div>
             <div className="text-sm text-gray-600">Total Gaps</div>
           </div>
@@ -382,23 +382,23 @@ export default function ReportsPage() {
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-8 border border-blue-200">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">🤖 AI Document Analysis Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-lg border border-blue-200">
+            <div className="bg-surface p-4 rounded-lg border border-blue-200">
               <div className="text-2xl font-bold text-blue-600">{stats.totalDocuments}</div>
               <div className="text-sm text-gray-600">Total Documents</div>
             </div>
-            <div className="bg-white p-4 rounded-lg border border-blue-200">
+            <div className="bg-surface p-4 rounded-lg border border-blue-200">
               <div className="text-2xl font-bold text-green-600">{stats.documentsWithAI}</div>
               <div className="text-sm text-gray-600">AI Analyzed</div>
             </div>
-            <div className="bg-white p-4 rounded-lg border border-blue-200">
+            <div className="bg-surface p-4 rounded-lg border border-blue-200">
               <div className="text-2xl font-bold text-indigo-600">{stats.documentControlLinks}</div>
               <div className="text-sm text-gray-600">AI Control Links</div>
             </div>
-            <div className="bg-white p-4 rounded-lg border border-blue-200">
+            <div className="bg-surface p-4 rounded-lg border border-blue-200">
               <button
                 onClick={runComprehensiveAIAnalysis}
                 disabled={documentsLoading}
-                className="w-full h-full flex flex-col items-center justify-center text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 rounded transition-colors"
+                className="w-full h-full flex flex-col items-center justify-center text-white bg-indigo-600 hover:bg-indigo-500 disabled:bg-gray-400 rounded transition-colors"
               >
                 {documentsLoading ? (
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
@@ -417,7 +417,7 @@ export default function ReportsPage() {
         <div className="mb-6">
           <button
             onClick={exportReport}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -428,7 +428,7 @@ export default function ReportsPage() {
 
         {/* Document AI Results */}
         {documents.length > 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 mb-8">
+          <div className="bg-surface rounded-lg border border-gray-200 mb-8">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900">Document AI Analysis Results</h2>
             </div>
@@ -443,14 +443,14 @@ export default function ReportsPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Upload Date</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-surface divide-y divide-gray-200">
                   {documents.map((doc) => {
                     const avgConfidence = doc.control_links.length > 0 
                       ? Math.round(doc.control_links.reduce((sum, link) => sum + link.confidence, 0) / doc.control_links.length * 100)
                       : 0;
                     
                     return (
-                      <tr key={doc.id} className="hover:bg-gray-50">
+                      <tr key={doc.id} className="hover:bg-gray-100">
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-gray-900">{doc.filename}</div>
                         </td>
@@ -500,17 +500,17 @@ export default function ReportsPage() {
             </div>
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                <div className="bg-white p-4 rounded-lg border">
+                <div className="bg-surface p-4 rounded-lg border">
                   <h3 className="font-medium text-gray-900 mb-2">Coverage Analysis</h3>
                   <div className="text-2xl font-bold text-blue-600">{aiAnalysisResults.coverage_percentage || 0}%</div>
                   <div className="text-sm text-gray-600">Controls with Evidence</div>
                 </div>
-                <div className="bg-white p-4 rounded-lg border">
+                <div className="bg-surface p-4 rounded-lg border">
                   <h3 className="font-medium text-gray-900 mb-2">Risk Assessment</h3>
                   <div className="text-2xl font-bold text-red-600">{aiAnalysisResults.high_risk_gaps || 0}</div>
                   <div className="text-sm text-gray-600">High Risk Gaps</div>
                 </div>
-                <div className="bg-white p-4 rounded-lg border">
+                <div className="bg-surface p-4 rounded-lg border">
                   <h3 className="font-medium text-gray-900 mb-2">Evidence Quality</h3>
                   <div className="text-2xl font-bold text-green-600">{aiAnalysisResults.avg_confidence || 0}%</div>
                   <div className="text-sm text-gray-600">Average Confidence</div>
@@ -518,7 +518,7 @@ export default function ReportsPage() {
               </div>
               
               {aiAnalysisResults.recommendations && (
-                <div className="bg-white p-4 rounded-lg border">
+                <div className="bg-surface p-4 rounded-lg border">
                   <h3 className="font-medium text-gray-900 mb-3">AI Recommendations</h3>
                   <div className="space-y-2">
                     {aiAnalysisResults.recommendations.map((rec: string, idx: number) => (
@@ -535,7 +535,7 @@ export default function ReportsPage() {
         )}
 
         {/* Controls Table */}
-        <div className="bg-white rounded-lg border border-gray-200 mb-8">
+        <div className="bg-surface rounded-lg border border-gray-200 mb-8">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Control Compliance Overview</h2>
           </div>
@@ -551,13 +551,13 @@ export default function ReportsPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-surface divide-y divide-gray-200">
                 {controls.map((control) => {
                   const scan = control.latest_scan;
                   const status = scan ? getControlStatus(scan) : 'Not Scanned';
                   
                   return (
-                    <tr key={control.id} className="hover:bg-gray-50">
+                    <tr key={control.id} className="hover:bg-gray-100">
                       <td className="px-6 py-4">
                         <div>
                           <div className="text-sm font-medium text-gray-900">{control.code}: {control.title}</div>
@@ -603,7 +603,7 @@ export default function ReportsPage() {
         </div>
 
         {/* Gaps Analysis */}
-        <div className="bg-white rounded-lg border border-gray-200">
+        <div className="bg-surface rounded-lg border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Gaps Analysis & Recommendations</h2>
           </div>

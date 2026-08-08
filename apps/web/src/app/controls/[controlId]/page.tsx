@@ -320,7 +320,7 @@ export default function ControlDetailPage() {
             <div className="flex space-x-3">
               <Link
                 href="/documents"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-surface hover:bg-gray-100"
               >
                 Upload Evidence
               </Link>
@@ -330,7 +330,7 @@ export default function ControlDetailPage() {
                 className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${
                   scanLoading || evidence.length === 0
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
+                    : 'bg-blue-600 hover:bg-blue-400'
                 }`}
               >
                 {scanLoading ? 'Starting Scan...' : 'Start AI Scan'}
@@ -344,7 +344,7 @@ export default function ControlDetailPage() {
           {/* Left Column - Requirements and Evidence */}
           <div className="space-y-6">
             {/* Requirements */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900">Requirements</h2>
               </div>
@@ -371,20 +371,20 @@ export default function ControlDetailPage() {
             </div>
 
             {/* Evidence */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                   <h2 className="text-lg font-semibold text-gray-900">Linked Evidence</h2>
                   <div className="space-x-2">
                     <button
                       onClick={() => setShowLinkModal(true)}
-                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-700"
+                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-400"
                     >
                       Link Document
                     </button>
                     <Link
                       href="/documents"
-                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700"
+                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-400"
                     >
                       Upload New
                     </Link>
@@ -501,7 +501,7 @@ export default function ControlDetailPage() {
           <div className="space-y-6">
             {/* Latest Scan Results */}
             {latestScan ? (
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+              <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
                 <div className="px-6 py-4 border-b border-gray-200">
                   <div className="flex justify-between items-center">
                     <h2 className="text-lg font-semibold text-gray-900">Latest Scan Results</h2>
@@ -569,7 +569,7 @@ export default function ControlDetailPage() {
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+              <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
                 <div className="px-6 py-4 border-b border-gray-200">
                   <h2 className="text-lg font-semibold text-gray-900">AI Scanning</h2>
                 </div>
@@ -590,7 +590,7 @@ export default function ControlDetailPage() {
                     className={`inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white ${
                       evidence.length === 0
                         ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700'
+                        : 'bg-blue-600 hover:bg-blue-400'
                     }`}
                   >
                     Start AI Scan
@@ -601,7 +601,7 @@ export default function ControlDetailPage() {
 
             {/* Gaps and Recommendations */}
             {latestScan?.gaps && latestScan.gaps.length > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+              <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
                 <div className="px-6 py-4 border-b border-gray-200">
                   <h2 className="text-lg font-semibold text-gray-900">Compliance Gaps</h2>
                 </div>
@@ -616,7 +616,7 @@ export default function ControlDetailPage() {
                             <h5 className="text-sm font-medium text-gray-700 mb-2">Recommended Actions:</h5>
                             <div className="space-y-2">
                               {gap.recommended_actions.map((action, actionIndex) => (
-                                <div key={actionIndex} className="bg-white p-3 rounded border">
+                                <div key={actionIndex} className="bg-surface p-3 rounded border">
                                   <div className="flex justify-between items-start mb-1">
                                     <h6 className="font-medium text-gray-900">{action.title}</h6>
                                     <span className={`px-2 py-1 text-xs rounded-full ${
@@ -645,7 +645,7 @@ export default function ControlDetailPage() {
         {/* Document Linking Modal */}
         {showLinkModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4">
+            <div className="bg-surface rounded-lg p-6 max-w-lg w-full mx-4">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-medium text-gray-900">Link Document as Evidence</h3>
                 <button
@@ -671,7 +671,7 @@ export default function ControlDetailPage() {
                   <Link
                     href="/documents"
                     onClick={() => setShowLinkModal(false)}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-400"
                   >
                     Upload Documents
                   </Link>
@@ -686,7 +686,7 @@ export default function ControlDetailPage() {
                     ).map((doc) => (
                       <div
                         key={doc.id}
-                        className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 cursor-pointer"
+                        className="border border-gray-200 rounded-lg p-3 hover:bg-gray-100 cursor-pointer"
                         onClick={async () => {
                           await linkExistingEvidence(doc.id);
                           setShowLinkModal(false);
@@ -719,7 +719,7 @@ export default function ControlDetailPage() {
                   <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
                     <button
                       onClick={() => setShowLinkModal(false)}
-                      className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                      className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-surface hover:bg-gray-100"
                     >
                       Cancel
                     </button>

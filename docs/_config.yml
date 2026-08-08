@@ -1,8 +1,8 @@
 # Site settings
 title: GeekyGoose Compliance
 description: Enterprise‑grade, AI‑powered compliance automation.
-url: "https://q7technology.github.io"
-baseurl: "/GeekyGoose-Compliance-Community"
+url: "https://geekygoose.io"
+baseurl: ""
 
 # Build settings
 theme: null
@@ -17,7 +17,7 @@ sass:
   style: compressed
 
 # Repo metadata (used by jekyll-seo-tag and links)
-repository: q7technology/GeekyGoose-Compliance-Community
+repository: GeekyG-byte/GeekyGoose-Compliance-Community
 
 # Navigation
 nav_links:
@@ -34,7 +34,7 @@ nav_links:
   - title: Network
     url: /network-architecture
   - title: GitHub
-    url: https://github.com/q7technology/GeekyGoose-Compliance-Community
+    url: https://github.com/GeekyG-byte/GeekyGoose-Compliance-Community
 
 # Defaults
 defaults:

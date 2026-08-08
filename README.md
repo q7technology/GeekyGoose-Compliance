@@ -3,9 +3,9 @@
 > **Get Compliant Fast** — AI-Powered Compliance Automation for SMB + Internal IT Teams
 
 ![License](https://img.shields.io/badge/license-AGPLv3-blue.svg)
-![Version](https://img.shields.io/badge/version-0.4.0-green.svg)
+![Version](https://img.shields.io/badge/version-0.5.0-green.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
-![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
@@ -22,6 +22,8 @@
 
 ### Compliance Frameworks
 - **Essential Eight** — all 8 controls with maturity level support
+- **PCI DSS v4.0.1** — all 12 principal requirements for payment card security
+- **Australian financial frameworks** — APRA CPS 234, APRA CPS 230, AUSTRAC AML/CTF, and the Privacy Act 1988 (APPs) bundled out of the box
 - **Extensible** — architecture ready for ISO 27001, NIST CSF, CIS Controls, SOC 2
 
 ### Document & Evidence Management
@@ -51,7 +53,7 @@
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  Browser                                                │
-│  Next.js 15 · TypeScript · Tailwind CSS                │
+│  Next.js 16 · TypeScript · Tailwind CSS                │
 │  JWT stored in cookie + localStorage                   │
 └───────────────────────┬─────────────────────────────────┘
                         │ HTTPS
@@ -89,7 +91,7 @@
 ### 1. Clone
 
 ```bash
-git clone https://github.com/q7technology/GeekyGoose-Compliance-Community.git
+git clone https://github.com/GeekyG-byte/GeekyGoose-Compliance-Community.git
 cd GeekyGoose-Compliance-Community
 ```
 
@@ -137,7 +139,7 @@ OLLAMA_CONTEXT_SIZE=32768
 # OPENAI_API_KEY is stored in the database via Settings page,
 # encrypted with ENCRYPTION_KEY. Set here only as a fallback.
 # OPENAI_API_KEY=sk-...
-# OPENAI_MODEL=gpt-4o-mini
+# OPENAI_MODEL=gpt-5.6-terra
 
 # ── Frontend ───────────────────────────────────────────
 NEXT_PUBLIC_API_URL=http://localhost:8000
@@ -154,8 +156,8 @@ docker compose ps   # confirm all containers are healthy
 ### 5. Initialise the database
 
 ```bash
-docker compose exec api python init_db.py
-docker compose exec api python run_seed.py   # loads Essential Eight framework
+docker compose exec api python init_db.py    # creates tables and loads Essential Eight + PCI DSS + APRA + AUSTRAC + Privacy Act frameworks
+docker compose exec api python run_seed.py   # optional: standalone Essential Eight seed (skips if already loaded)
 ```
 
 ### 6. First-run setup
@@ -241,8 +243,8 @@ Configure via the **Settings → AI** page in the UI. The API key is encrypted w
 
 ```env
 AI_PROVIDER=openai
-OPENAI_MODEL=gpt-4o-mini
-OPENAI_VISION_MODEL=gpt-4o
+OPENAI_MODEL=gpt-5.6-terra
+OPENAI_VISION_MODEL=gpt-5.6-terra
 ```
 
 ### Dual vision validation
@@ -412,11 +414,15 @@ python test_scanner.py
 | Framework | Status |
 |---|---|
 | Essential Eight | Complete (all 8 controls, maturity levels 1–3) |
+| PCI DSS v4.0.1 | Complete (12 principal requirements, 55 sub-requirements; v4.0.1 is current — all v4 future-dated requirements mandatory since 31 March 2025) |
+| APRA CPS 234 (2019) | Complete |
+| APRA CPS 230 (2024) | Complete |
+| AUSTRAC AML/CTF (2006) | Complete |
+| Privacy Act 1988 (APPs) | Complete |
 | ISO 27001 | Planned |
 | NIST CSF | Planned |
 | CIS Controls | Planned |
 | SOC 2 | Planned |
-| PCI DSS | Planned |
 
 ---
 

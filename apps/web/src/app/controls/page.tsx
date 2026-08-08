@@ -423,7 +423,7 @@ export default function ControlsPage() {
 
         {/* AI Scans Popup */}
         {Object.keys(runningScans).length > 0 && showScansPopup && (
-          <div className="fixed bottom-4 right-4 z-50 w-96 max-h-[600px] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
+          <div className="fixed bottom-4 right-4 z-50 w-96 max-h-[600px] bg-surface rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2 text-white">
                 <div className="animate-pulse">🤖</div>
@@ -534,7 +534,7 @@ export default function ControlsPage() {
             {controls.map((control) => (
               <div
                 key={control.id}
-                className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-surface rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -609,7 +609,7 @@ export default function ControlsPage() {
                     <div className="flex justify-between items-center">
                       <Link
                         href={`/controls/${control.id}`}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       >
                         View Details
                       </Link>

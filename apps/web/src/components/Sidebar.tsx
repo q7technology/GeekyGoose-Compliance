@@ -54,7 +54,7 @@ export default function Sidebar() {
           </div>
           <button
             onClick={() => setIsMobileMenuOpen(false)}
-            className="lg:hidden p-2 rounded-md hover:bg-slate-700 text-gray-300 hover:text-white"
+            className="lg:hidden p-2 rounded-md hover:bg-slate-700 text-gray-700 hover:text-white"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -79,7 +79,7 @@ export default function Sidebar() {
                     ? item.premium
                       ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/50'
                       : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50'
-                    : 'text-gray-300 hover:bg-slate-700/50 hover:text-white'
+                    : 'text-gray-700 hover:bg-slate-700/50 hover:text-white'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -97,11 +97,11 @@ export default function Sidebar() {
         {/* Footer */}
         <div className="p-4 border-t border-slate-700">
           <div className="px-2">
-            <div className="text-xs font-medium text-gray-400 mb-1">
+            <div className="text-xs font-medium text-gray-500 mb-1">
               Essential Eight Compliance
             </div>
             <div className="text-xs text-gray-500">
-              Version 0.3.1
+              Version 0.5.0
             </div>
           </div>
         </div>

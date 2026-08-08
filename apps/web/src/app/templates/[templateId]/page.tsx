@@ -191,19 +191,19 @@ export default function TemplateDetailPage() {
             <div className="flex space-x-3">
               <Link
                 href={`/templates/${template.id}/fill`}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 Fill Template
               </Link>
               <button
                 onClick={() => downloadTemplateAsWord(template)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
               >
                 📄 Download Policy Word
               </button>
               <Link
                 href={`/templates/${template.id}/edit`}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-surface hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Edit Template
               </Link>
@@ -215,7 +215,7 @@ export default function TemplateDetailPage() {
           {/* Left Column - Template Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Company Fields */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900">Company Information Fields</h2>
                 <p className="text-sm text-gray-600 mt-1">
@@ -270,7 +270,7 @@ export default function TemplateDetailPage() {
             </div>
 
             {/* Evidence Requirements */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900">Evidence Requirements</h2>
                 <p className="text-sm text-gray-600 mt-1">
@@ -309,7 +309,7 @@ export default function TemplateDetailPage() {
           {/* Right Column - Template Usage Statistics */}
           <div className="space-y-6">
             {/* Template Stats */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900">Template Statistics</h2>
               </div>
@@ -344,7 +344,7 @@ export default function TemplateDetailPage() {
             </div>
 
             {/* Recent Submissions */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900">Recent Submissions</h2>
               </div>
@@ -394,7 +394,7 @@ export default function TemplateDetailPage() {
             </div>
 
             {/* Template Metadata */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900">Template Information</h2>
               </div>

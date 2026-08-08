@@ -19,7 +19,7 @@ title: Home
       </p>
 
       <div class="hero-actions">
-        <a class="btn btn-primary" href="https://github.com/q7technology/GeekyGoose-Compliance-Community" target="_blank" rel="noopener">
+        <a class="btn btn-primary" href="https://github.com/GeekyG-byte/GeekyGoose-Compliance-Community" target="_blank" rel="noopener">
           View on GitHub
         </a>
         <a class="btn btn-ghost" href="{{ '/license' | relative_url }}">Review licensing</a>
@@ -28,15 +28,17 @@ title: Home
 
       <div style="margin-top:16px;" class="pills">
         <span class="pill">Essential Eight</span>
+        <span class="pill">PCI DSS v4.0.1</span>
+        <span class="pill">APRA CPS 234/230</span>
+        <span class="pill">AUSTRAC AML/CTF</span>
+        <span class="pill">Privacy Act (APPs)</span>
         <span class="pill">ISO 27001 (roadmap)</span>
-        <span class="pill">NIST / CIS (extensible)</span>
-        <span class="pill">Multi-tenant</span>
       </div>
     </div>
 
     <div class="hero-card">
       <h3>At a glance</h3>
-      <div class="metric"><span class="num">0.3.0</span><span class="lbl">Current release</span></div>
+      <div class="metric"><span class="num">0.5.0</span><span class="lbl">Current release</span></div>
       <div class="metric"><span class="num">AI</span><span class="lbl">Evidence → Control mapping</span></div>
       <div class="metric"><span class="num">Docker</span><span class="lbl">One-command deploy</span></div>
       <div class="pills">
@@ -89,7 +91,7 @@ title: Home
 
   <!-- Use pure HTML code block so GitHub Pages always renders it correctly -->
   <div class="content">
-    <pre><code class="language-bash">git clone https://github.com/q7technology/GeekyGoose-Compliance-Community.git
+    <pre><code class="language-bash">git clone https://github.com/GeekyG-byte/GeekyGoose-Compliance-Community.git
 cd GeekyGoose-Compliance-Community
 
 cp .env.example .env

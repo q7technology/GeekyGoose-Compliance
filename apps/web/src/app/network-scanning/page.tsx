@@ -53,7 +53,7 @@ export default function NetworkScanningPage() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
               {/* Step 1 */}
-              <div className="bg-white p-6 rounded-xl border-2 border-amber-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-surface p-6 rounded-xl border-2 border-amber-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-center w-12 h-12 bg-amber-100 rounded-full mb-4 mx-auto">
                   <Server className="w-6 h-6 text-amber-600" />
                 </div>
@@ -67,7 +67,7 @@ export default function NetworkScanningPage() {
               </div>
 
               {/* Step 2 */}
-              <div className="bg-white p-6 rounded-xl border-2 border-blue-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-surface p-6 rounded-xl border-2 border-blue-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4 mx-auto">
                   <AlertTriangle className="w-6 h-6 text-blue-600" />
                 </div>
@@ -81,7 +81,7 @@ export default function NetworkScanningPage() {
               </div>
 
               {/* Step 3 */}
-              <div className="bg-white p-6 rounded-xl border-2 border-purple-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-surface p-6 rounded-xl border-2 border-purple-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-4 mx-auto">
                   <Brain className="w-6 h-6 text-purple-600" />
                 </div>
@@ -95,7 +95,7 @@ export default function NetworkScanningPage() {
               </div>
 
               {/* Step 4 */}
-              <div className="bg-white p-6 rounded-xl border-2 border-green-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-surface p-6 rounded-xl border-2 border-green-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4 mx-auto">
                   <FileCheck className="w-6 h-6 text-green-600" />
                 </div>
@@ -157,7 +157,7 @@ export default function NetworkScanningPage() {
                   { name: 'NIST CSF', icon: Shield },
                   { name: 'CIS Controls', icon: Lock },
                 ].map((framework, idx) => (
-                  <div key={idx} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-purple-100">
+                  <div key={idx} className="flex items-center gap-2 p-3 bg-surface rounded-lg border border-purple-100">
                     <framework.icon className="w-4 h-4 text-purple-600" />
                     <span className="text-sm font-medium text-gray-900">{framework.name}</span>
                   </div>
@@ -168,7 +168,7 @@ export default function NetworkScanningPage() {
         </div>
 
         {/* Planned Features */}
-        <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+        <div className="bg-surface rounded-2xl p-8 border border-gray-200 shadow-sm">
           <h3 className="text-xl font-bold text-gray-900 mb-6">Planned Features</h3>
 
           <div className="grid md:grid-cols-2 gap-6">

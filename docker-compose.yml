@@ -127,6 +127,10 @@ services:
       OLLAMA_CONTEXT_SIZE: ${OLLAMA_CONTEXT_SIZE:-32768}
     expose:
       - "8000"
+    ports:
+      # Loopback only: browser-side code calls NEXT_PUBLIC_API_URL (localhost:8000)
+      # directly, so the API must be reachable from the host in local dev.
+      - "127.0.0.1:8000:8000"
     depends_on:
       postgres:
         condition: service_healthy

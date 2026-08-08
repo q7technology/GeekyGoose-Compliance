@@ -322,7 +322,7 @@ export default function DocumentList({ refreshTrigger }: { refreshTrigger?: numb
       
       <div className="grid gap-4">
         {documents.map((doc) => (
-          <div key={doc.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow w-full overflow-hidden">
+          <div key={doc.id} className="bg-surface border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow w-full overflow-hidden">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start space-x-3 flex-1 min-w-0">
                 <div className="text-2xl flex-shrink-0">{getFileIcon(doc.mime_type)}</div>
@@ -350,14 +350,14 @@ export default function DocumentList({ refreshTrigger }: { refreshTrigger?: numb
                             </span>
                             <button
                               onClick={() => retryProcessing(doc)}
-                              className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-orange-600 text-white hover:bg-orange-700"
+                              className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-orange-600 text-white hover:bg-orange-500"
                               title="Retry AI processing (useful for OCR failures)"
                             >
                               🔄 Retry
                             </button>
                             <button
                               onClick={() => openLinkModal(doc)}
-                              className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-600 text-white hover:bg-blue-700"
+                              className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-600 text-white hover:bg-blue-400"
                               title="Manually select controls to link"
                             >
                               🔗 Link Manually
@@ -494,14 +494,14 @@ export default function DocumentList({ refreshTrigger }: { refreshTrigger?: numb
                     href={doc.download_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center px-3 py-1 border border-gray-300 text-sm font-medium rounded text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap"
+                    className="inline-flex items-center justify-center px-3 py-1 border border-gray-300 text-sm font-medium rounded text-gray-700 bg-surface hover:bg-gray-100 whitespace-nowrap"
                   >
                     Download
                   </a>
                   
                   <button
                     onClick={() => deleteDocument(doc.id)}
-                    className="inline-flex items-center justify-center px-3 py-1 border border-red-300 text-sm font-medium rounded text-red-700 bg-white hover:bg-red-50 whitespace-nowrap"
+                    className="inline-flex items-center justify-center px-3 py-1 border border-red-300 text-sm font-medium rounded text-red-700 bg-surface hover:bg-red-50 whitespace-nowrap"
                   >
                     Delete
                   </button>
@@ -522,7 +522,7 @@ export default function DocumentList({ refreshTrigger }: { refreshTrigger?: numb
       {/* Manual Linking Modal */}
       {showLinkModal && selectedDocument && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+          <div className="bg-surface rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
             <div className="p-6 border-b border-gray-200">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900">
@@ -607,7 +607,7 @@ export default function DocumentList({ refreshTrigger }: { refreshTrigger?: numb
                   setSelectedDocument(null)
                   setSelectedControls([])
                 }}
-                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-surface hover:bg-gray-100"
               >
                 Cancel
               </button>
@@ -617,7 +617,7 @@ export default function DocumentList({ refreshTrigger }: { refreshTrigger?: numb
                 className={`px-4 py-2 text-sm font-medium rounded-md text-white ${
                   selectedControls.length === 0
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
+                    : 'bg-blue-600 hover:bg-blue-400'
                 }`}
               >
                 Link {selectedControls.length} Control{selectedControls.length !== 1 ? 's' : ''}

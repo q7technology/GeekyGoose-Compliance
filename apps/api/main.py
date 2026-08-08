@@ -252,7 +252,7 @@ def _analyze_document_openai_two_step(file_text: str, filename: str, available_c
     import json as json_module
 
     try:
-        model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+        model = os.getenv("OPENAI_MODEL", "gpt-5.6-terra")
 
         # Step 1: summarise document
         scan_prompt = f"""Analyze document: {filename}
@@ -529,7 +529,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="GeekyGoose Compliance API",
     description="Compliance automation platform for SMB + internal IT teams",
-    version="0.3.0",  # Updated version
+    version="0.5.0",
     lifespan=lifespan
 )
 
@@ -695,7 +695,7 @@ async def analyze_file_content_for_controls(file: UploadFile, file_content: byte
                 if not isinstance(ai_client, dict):  # OpenAI
                     try:
                         response = ai_client.chat.completions.create(
-                            model="gpt-4o",  # Updated to latest vision model
+                            model="gpt-5.6-terra",
                             messages=[
                                 {
                                     "role": "user",
@@ -966,7 +966,7 @@ Respond with JSON only:
                     return generate_fallback_suggestions_from_filename(filename, available_controls)
             else:
                 # OpenAI
-                model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+                model = os.getenv("OPENAI_MODEL", "gpt-5.6-terra")
                 logger.info(f"Using OpenAI model: {model} for document analysis")
                 
                 try:
@@ -2016,7 +2016,7 @@ async def run_comprehensive_ai_analysis(request: dict, db: Session = Depends(get
                 
                 ai_response = create_chat_completion_safe(
                     client=ai_client,
-                    model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+                    model=os.getenv("OPENAI_MODEL", "gpt-5.6-terra"),
                     messages=[
                         {"role": "system", "content": "You are a compliance expert. Provide concise, actionable recommendations."},
                         {"role": "user", "content": analysis_prompt}
@@ -2607,8 +2607,8 @@ async def get_control_scans(control_id: str, db: Session = Depends(get_db), curr
 class AISettingsRequest(BaseModel):
     provider: str  # 'openai' or 'ollama'
     openai_api_key: Optional[str] = None
-    openai_model: Optional[str] = 'gpt-4o'
-    openai_vision_model: Optional[str] = 'gpt-4o'
+    openai_model: Optional[str] = 'gpt-5.6-terra'
+    openai_vision_model: Optional[str] = 'gpt-5.6-terra'
     openai_endpoint: Optional[str] = None
     ollama_endpoint: Optional[str] = 'http://localhost:11434'
     ollama_model: Optional[str] = 'qwen2.5:14b'
@@ -2626,7 +2626,7 @@ async def get_ai_settings(db: Session = Depends(get_db), current_user: User = De
     return {
         "provider": settings.ai_provider,
         "openai_model": settings.openai_model,
-        "openai_vision_model": settings.openai_vision_model or 'gpt-4o',
+        "openai_vision_model": settings.openai_vision_model or 'gpt-5.6-terra',
         "openai_endpoint": settings.openai_endpoint,
         "ollama_endpoint": settings.ollama_endpoint,
         "ollama_model": settings.ollama_model,
@@ -2715,7 +2715,7 @@ async def test_ai_connection(settings: AISettingsRequest, current_user: User = D
             )
             response = create_chat_completion_safe(
                 client=client,
-                model=settings.openai_model or "gpt-4o-mini",
+                model=settings.openai_model or "gpt-5.6-terra",
                 messages=[{"role": "user", "content": "Reply with exactly: 'OpenAI connection successful'"}],
                 max_tokens=10
             )
@@ -2723,7 +2723,7 @@ async def test_ai_connection(settings: AISettingsRequest, current_user: User = D
             return {
                 "status": "success",
                 "test_response": response.choices[0].message.content,
-                "model": settings.openai_model or "gpt-4o-mini"
+                "model": settings.openai_model or "gpt-5.6-terra"
             }
             
         elif settings.provider == "ollama":
@@ -3139,7 +3139,7 @@ Be strict: only PASS when the evidence clearly and comprehensively satisfies the
         else:
             completion = create_chat_completion_safe(
                 client=ai_client,
-                model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+                model=os.getenv("OPENAI_MODEL", "gpt-5.6-terra"),
                 messages=[
                     {"role": "system", "content": "You are a strict compliance auditor. Respond only with valid JSON."},
                     {"role": "user", "content": prompt},
@@ -3223,7 +3223,7 @@ async def analyze_text_with_ai(request: ControlAnalysisRequest, current_user: Us
             
         else:
             # Handle OpenAI
-            model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+            model = os.getenv("OPENAI_MODEL", "gpt-5.6-terra")
             
             response = create_chat_completion_safe(
                 client=ai_client,
@@ -3296,7 +3296,7 @@ async def analyze_image_with_ai(
                 image_b64 = base64.b64encode(processed_content).decode('utf-8')
 
                 response = ai_client.chat.completions.create(
-                    model="gpt-4o",
+                    model="gpt-5.6-terra",
                     messages=[
                         {
                             "role": "user",
@@ -3332,7 +3332,7 @@ async def analyze_image_with_ai(
                 if ocr_text.strip():
                     # Analyze OCR text with the prompt
                     response = ai_client.chat.completions.create(
-                        model="gpt-4o-mini",
+                        model="gpt-5.6-terra",
                         messages=[
                             {
                                 "role": "user",
@@ -3611,7 +3611,7 @@ async def analyze_document_controls(
                     # OpenAI GPT-4 Vision
                     try:
                         response = ai_client.chat.completions.create(
-                            model="gpt-4-vision-preview",
+                            model="gpt-5.6-terra",
                             messages=[
                                 {
                                     "role": "user",
@@ -3761,7 +3761,7 @@ Do not include any text before or after the JSON. Do not use markdown formatting
                 
         else:
             # Handle OpenAI
-            model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+            model = os.getenv("OPENAI_MODEL", "gpt-5.6-terra")
             
             response = create_chat_completion_safe(
                 client=ai_client,

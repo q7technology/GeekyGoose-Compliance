@@ -89,7 +89,7 @@ export default function GlobalScanStatus() {
       <div className="fixed bottom-4 right-4 z-50">
         <button
           onClick={() => setIsMinimized(false)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2"
+          className="bg-blue-600 hover:bg-blue-400 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2"
         >
           <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -139,7 +139,7 @@ export default function GlobalScanStatus() {
 
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {runningScans.map((scan) => (
-              <div key={scan.id} className="bg-white rounded-md p-3 border border-blue-200">
+              <div key={scan.id} className="bg-surface rounded-md p-3 border border-blue-200">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <Link

@@ -30,7 +30,7 @@ export default function DocumentsPage() {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 Upload Documents
               </h2>
-              <div className="bg-white p-6 rounded-lg border border-gray-200">
+              <div className="bg-surface p-6 rounded-lg border border-gray-200">
                 <FileUpload onUploadComplete={handleUploadComplete} />
               </div>
             </div>
@@ -57,7 +57,7 @@ export default function DocumentsPage() {
               <div className="flex space-x-2">
                 <Link
                   href="/templates"
-                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                 >
                   Browse Templates →
                 </Link>
@@ -80,7 +80,7 @@ export default function DocumentsPage() {
           </div>
 
           <div className="min-w-0">
-            <div className="bg-white p-6 rounded-lg border border-gray-200 w-full overflow-hidden">
+            <div className="bg-surface p-6 rounded-lg border border-gray-200 w-full overflow-hidden">
               <DocumentList refreshTrigger={refreshTrigger} />
             </div>
           </div>

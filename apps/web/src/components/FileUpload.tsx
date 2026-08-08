@@ -295,7 +295,7 @@ export default function FileUpload({ onUploadComplete }: { onUploadComplete?: ()
             className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${
               isUploading
                 ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
+                : 'bg-blue-600 hover:bg-blue-400 cursor-pointer'
             }`}
           >
             {isUploading ? (
@@ -349,7 +349,7 @@ export default function FileUpload({ onUploadComplete }: { onUploadComplete?: ()
           {Object.entries(uploadResults).map(([fileKey, status]) => {
             const fileName = fileKey.split('-').slice(0, -1).join('-') // Remove the index
             return (
-              <div key={fileKey} className="flex items-center justify-between text-xs p-2 bg-white border border-gray-200 rounded">
+              <div key={fileKey} className="flex items-center justify-between text-xs p-2 bg-surface border border-gray-200 rounded">
                 <span className="flex-1 truncate">{fileName}</span>
                 <span className={`ml-2 ${status.includes('✅') ? 'text-green-600' : 'text-red-600'}`}>
                   {status}

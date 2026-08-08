@@ -126,9 +126,9 @@ def process_scan(self, scan_id: str):
         if settings.ai_provider == 'ollama':
             model_name = f"{settings.ollama_model} (Ollama)"
         elif settings.ai_provider == 'openai':
-            model_name = settings.openai_model or 'gpt-4o-mini'
+            model_name = settings.openai_model or 'gpt-5.6-terra'
         else:
-            model_name = 'gpt-4'
+            model_name = 'gpt-5.6-terra'
 
         # Get control and requirements first to set total
         control = scan.control

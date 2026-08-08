@@ -13,10 +13,9 @@ const nextConfig = {
   env: {
     HOSTNAME: '0.0.0.0',
   },
-  // Configure for development proxy
-  devIndicators: {
-    buildActivity: false,
-  },
+  // Dev server blocks cross-origin requests to /_next resources by default;
+  // allow the loopback aliases so http://127.0.0.1:3000 works like localhost.
+  allowedDevOrigins: ['127.0.0.1', 'localhost'],
   // Next.js 16 features
   experimental: {
     // Enable optimizations for better performance

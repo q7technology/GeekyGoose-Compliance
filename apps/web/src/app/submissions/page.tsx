@@ -176,7 +176,7 @@ export default function SubmissionsPage() {
             </div>
             <Link
               href="/templates"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-surface hover:bg-gray-100"
             >
               ← Back to Templates
             </Link>
@@ -195,7 +195,7 @@ export default function SubmissionsPage() {
               </p>
               <Link
                 href="/templates"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-400"
               >
                 Browse Templates
               </Link>
@@ -206,7 +206,7 @@ export default function SubmissionsPage() {
             {submissions.map((submission) => (
               <div
                 key={submission.id}
-                className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-surface rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -295,13 +295,13 @@ export default function SubmissionsPage() {
                         <>
                           <button
                             onClick={() => updateSubmissionStatus(submission.id, 'approved')}
-                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-700"
+                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-400"
                           >
                             Approve
                           </button>
                           <button
                             onClick={() => updateSubmissionStatus(submission.id, 'rejected')}
-                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700"
+                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-400"
                           >
                             Reject
                           </button>
@@ -311,20 +311,20 @@ export default function SubmissionsPage() {
                     <div className="flex space-x-2">
                       <button
                         onClick={() => downloadSubmissionAsWord(submission)}
-                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-purple-600 hover:bg-purple-700"
+                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-purple-600 hover:bg-purple-400"
                         title="Download completed policy document"
                       >
                         📄 Download Word
                       </button>
                       <button
                         onClick={() => setSelectedSubmission(selectedSubmission?.id === submission.id ? null : submission)}
-                        className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50"
+                        className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-surface hover:bg-gray-100"
                       >
                         {selectedSubmission?.id === submission.id ? 'Hide Details' : 'View Details'}
                       </button>
                       <button
                         onClick={() => deleteSubmission(submission.id)}
-                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700"
+                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-400"
                         title="Delete this submission"
                       >
                         🗑️ Delete

@@ -435,7 +435,7 @@ export default function TemplatesPage() {
               <div className="relative dropdown-container">
                 <button
                   onClick={() => setShowEssentialEightDropdown(!showEssentialEightDropdown)}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                 >
                   Essential Eight Templates
                   <svg className="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -443,7 +443,7 @@ export default function TemplatesPage() {
                   </svg>
                 </button>
                 {showEssentialEightDropdown && (
-                  <div className="absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 max-h-96 overflow-y-auto">
+                  <div className="absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-surface ring-1 ring-black ring-opacity-5 z-10 max-h-96 overflow-y-auto">
                     <div className="py-1" role="menu">
                       {essentialEightTemplates.map((eeTemplate) => {
                         const existingTemplate = templates.find(t => t.control?.code === eeTemplate.code);
@@ -481,7 +481,7 @@ export default function TemplatesPage() {
               </div>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Create Template
               </button>
@@ -499,7 +499,7 @@ export default function TemplatesPage() {
             return (
               <div
                 key={template.id}
-                className={`bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow ${
+                className={`bg-surface rounded-lg border shadow-sm hover:shadow-md transition-shadow ${
                   isSatisfied ? 'border-green-300' : isGap ? 'border-yellow-300' : 'border-gray-200'
                 }`}
               >
@@ -588,20 +588,20 @@ export default function TemplatesPage() {
                     <div className="flex justify-between items-center">
                       <Link
                         href={`/templates/${template.id}/fill`}
-                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-700"
+                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-400"
                       >
                         Fill Template
                       </Link>
                       <div className="flex space-x-2">
                         <Link
                           href={`/templates/${template.id}`}
-                          className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50"
+                          className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-surface hover:bg-gray-100"
                         >
                           View
                         </Link>
                         <Link
                           href={`/templates/${template.id}/edit`}
-                          className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700"
+                          className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-400"
                         >
                           Edit
                         </Link>
@@ -614,7 +614,7 @@ export default function TemplatesPage() {
                         onClick={() => {
                           setShowEssentialEightDropdown(true);
                         }}
-                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-yellow-600 hover:bg-yellow-700"
+                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-yellow-600 hover:bg-yellow-500"
                       >
                         Generate Template
                       </button>
@@ -638,7 +638,7 @@ export default function TemplatesPage() {
               </p>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-400"
               >
                 Create Template
               </button>
@@ -649,7 +649,7 @@ export default function TemplatesPage() {
         {/* Create Template Modal */}
         {showCreateModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="bg-surface rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-medium text-gray-900">Create New Template</h3>
                 <button
@@ -837,7 +837,7 @@ export default function TemplatesPage() {
               <div className="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
                 <button
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-surface hover:bg-gray-100"
                 >
                   Cancel
                 </button>
@@ -847,7 +847,7 @@ export default function TemplatesPage() {
                   className={`px-4 py-2 text-sm font-medium rounded-md text-white ${
                     !newTemplate.name || !newTemplate.control_id
                       ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-blue-600 hover:bg-blue-700'
+                      : 'bg-blue-600 hover:bg-blue-400'
                   }`}
                 >
                   Create Template

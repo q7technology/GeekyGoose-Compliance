@@ -571,7 +571,7 @@ export default function FillTemplatePage() {
 
         {/* Compliance Score Section */}
         {template && (
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-8">
+          <div className="bg-surface rounded-lg border border-gray-200 shadow-sm mb-8">
             <div className="px-6 py-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -608,7 +608,7 @@ export default function FillTemplatePage() {
                     className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${
                       runningFullValidation || Object.keys(evidenceUploads).filter(key => evidenceUploads[key]?.file).length === 0
                         ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700'
+                        : 'bg-blue-600 hover:bg-blue-400'
                     }`}
                   >
                     {runningFullValidation ? (
@@ -707,7 +707,7 @@ export default function FillTemplatePage() {
 
         <div className="space-y-8">
           {/* Company Information Section */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+          <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900">Company Information</h2>
               <p className="text-sm text-gray-600 mt-1">
@@ -745,7 +745,7 @@ export default function FillTemplatePage() {
           </div>
 
           {/* Evidence Requirements Section */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+          <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900">Evidence Requirements</h2>
               <p className="text-sm text-gray-600 mt-1">
@@ -845,7 +845,7 @@ export default function FillTemplatePage() {
                             {linkedDocuments.map((doc) => (
                               <div
                                 key={doc.id}
-                                className="flex items-center justify-between bg-white p-2 rounded border border-blue-100 hover:border-blue-300 transition-colors"
+                                className="flex items-center justify-between bg-surface p-2 rounded border border-blue-100 hover:border-blue-300 transition-colors"
                               >
                                 <div className="flex items-center gap-2 flex-1">
                                   <input
@@ -1007,7 +1007,7 @@ export default function FillTemplatePage() {
           </div>
 
           {/* Submit Section */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+          <div className="bg-surface rounded-lg border border-gray-200 shadow-sm">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -1036,7 +1036,7 @@ export default function FillTemplatePage() {
                 <div className="flex space-x-3">
                   <Link
                     href="/templates"
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-surface hover:bg-gray-100"
                   >
                     Cancel
                   </Link>
@@ -1046,7 +1046,7 @@ export default function FillTemplatePage() {
                       disabled={!areRequiredFieldsFilled()}
                       className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${
                         areRequiredFieldsFilled()
-                          ? 'bg-purple-600 hover:bg-purple-700'
+                          ? 'bg-purple-600 hover:bg-purple-400'
                           : 'bg-gray-400 cursor-not-allowed'
                       }`}
                       title={areRequiredFieldsFilled() ? 'Download policy document with your company information' : 'Fill in required company fields first'}
@@ -1060,7 +1060,7 @@ export default function FillTemplatePage() {
                     className={`inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white ${
                       submitting
                         ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700'
+                        : 'bg-blue-600 hover:bg-blue-400'
                     }`}
                     title="Submit template with company information and evidence"
                   >

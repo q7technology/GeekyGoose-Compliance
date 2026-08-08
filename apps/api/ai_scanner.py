@@ -27,7 +27,7 @@ def get_or_create_settings(db, org_id):
     settings = Settings(
         org_id=org_id,
         ai_provider=os.getenv("AI_PROVIDER", "ollama"),
-        openai_model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+        openai_model=os.getenv("OPENAI_MODEL", "gpt-5.6-terra"),
         openai_endpoint=os.getenv("OPENAI_ENDPOINT"),
         ollama_endpoint=os.getenv("OLLAMA_ENDPOINT", "http://host.docker.internal:11434"),
         ollama_model=os.getenv("OLLAMA_MODEL", "qwen2.5:14b"),
@@ -116,7 +116,7 @@ def get_vision_clients_for_dual_validation(org_id):
                     api_key=_resolve_api_key(settings.openai_api_key),
                     base_url=settings.openai_endpoint
                 ),
-                'model': settings.openai_vision_model or 'gpt-4o',
+                'model': settings.openai_vision_model or 'gpt-5.6-terra',
                 'type': 'openai'
             }
             logger.info(f"Initialized OpenAI vision client with model {clients['openai']['model']}")
@@ -254,7 +254,7 @@ class ComplianceScanner:
     AI-powered compliance scanner that analyzes evidence against requirements.
     """
     
-    def __init__(self, model: str = "gpt-4"):
+    def __init__(self, model: str = "gpt-5.6-terra"):
         self.model = model
         self.prompt_version = "v1.0"
     
@@ -288,7 +288,7 @@ class ComplianceScanner:
                 # Handle OpenAI - use standard chat completions with JSON
                 response = create_chat_completion_safe(
                     client=ai_client,
-                    model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+                    model=os.getenv("OPENAI_MODEL", "gpt-5.6-terra"),
                     messages=[
                         {
                             "role": "system",

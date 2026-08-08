@@ -175,7 +175,7 @@ export default function EssentialEightTemplatesPage() {
           {controls.map((control) => (
             <div
               key={control.id}
-              className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-surface rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
@@ -216,13 +216,13 @@ export default function EssentialEightTemplatesPage() {
                 <div className="space-y-2">
                   <button
                     onClick={() => setSelectedControl(selectedControl === control.id ? null : control.id)}
-                    className="w-full inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    className="w-full inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-surface hover:bg-gray-100"
                   >
                     {selectedControl === control.id ? 'Hide Details' : 'Preview Template'}
                   </button>
                   <button
                     onClick={() => generateTemplate(control.id)}
-                    className="w-full inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                    className="w-full inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-400"
                   >
                     Generate Template
                   </button>

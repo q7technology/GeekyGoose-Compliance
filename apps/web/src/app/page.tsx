@@ -3,7 +3,7 @@ import { FileText, Shield, CheckCircle2, TrendingUp, Lock, FileCheck, Sparkles, 
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="p-6 lg:p-8">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
@@ -26,7 +26,7 @@ export default function Home() {
           {/* Main Feature Cards */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <Link href="/documents" className="group">
-              <div className="bg-white p-8 rounded-2xl border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="bg-surface p-8 rounded-2xl border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-4">
                   <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl">
                     <FileText className="w-8 h-8 text-white" />
@@ -47,7 +47,7 @@ export default function Home() {
             </Link>
 
             <Link href="/controls" className="group">
-              <div className="bg-white p-8 rounded-2xl border border-gray-200 hover:border-purple-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="bg-surface p-8 rounded-2xl border border-gray-200 hover:border-purple-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-4">
                   <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl">
                     <Shield className="w-8 h-8 text-white" />
@@ -68,7 +68,7 @@ export default function Home() {
             </Link>
 
             <div className="group relative">
-              <div className="bg-white p-8 rounded-2xl border border-gray-200 hover:border-amber-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="bg-surface p-8 rounded-2xl border border-gray-200 hover:border-amber-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="absolute top-4 right-4">
                   <span className="inline-flex items-center gap-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
                     <Crown className="w-3 h-3" />
@@ -91,7 +91,7 @@ export default function Home() {
           </div>
 
           {/* Essential Eight Framework Section */}
-          <div className="bg-gradient-to-br from-white to-blue-50 p-8 rounded-2xl border border-blue-100 shadow-lg">
+          <div className="bg-surface p-8 rounded-2xl border border-blue-100 shadow-lg">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Lock className="w-6 h-6 text-blue-600" />
