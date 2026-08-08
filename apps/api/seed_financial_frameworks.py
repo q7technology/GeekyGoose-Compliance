@@ -1,6 +1,6 @@
 """
 Database seeding for Australian financial compliance frameworks:
-  - PCI DSS v4.0           (global payment card standard, widely adopted in Australia)
+  - PCI DSS v4.0.1         (global payment card standard, widely adopted in Australia)
   - APRA CPS 234 (2019)    (mandatory for APRA-regulated entities: banks, insurers, super funds)
   - APRA CPS 230 (2024)    (operational risk management, effective 1 July 2025)
   - AUSTRAC AML/CTF (2006) (Anti-Money Laundering and Counter-Terrorism Financing Act)
@@ -12,19 +12,21 @@ from models import Framework, Control, Requirement
 
 
 # ---------------------------------------------------------------------------
-# PCI DSS v4.0
+# PCI DSS v4.0.1
 # ---------------------------------------------------------------------------
 
 def seed_pci_dss(db: Session):
     framework = Framework(
         id=uuid.uuid4(),
         name="PCI DSS",
-        version="4.0",
+        version="4.0.1",
         description=(
-            "The Payment Card Industry Data Security Standard (PCI DSS) v4.0 is a global "
-            "security standard administered by the PCI Security Standards Council. In Australia, "
-            "compliance is enforced by the major card brands (Visa, Mastercard) and is required "
-            "for all entities that store, process, or transmit payment card data."
+            "The Payment Card Industry Data Security Standard (PCI DSS) v4.0.1 (June 2024) is "
+            "the current version of the global security standard administered by the PCI Security "
+            "Standards Council; v4.0 was retired on 31 December 2024 and all future-dated v4 "
+            "requirements became mandatory on 31 March 2025. In Australia, compliance is enforced "
+            "by the major card brands (Visa, Mastercard) and is required for all entities that "
+            "store, process, or transmit payment card data."
         ),
     )
     db.add(framework)
@@ -69,9 +71,11 @@ def seed_pci_dss(db: Session):
                 ("PCI-3.2", "Sensitive authentication data (SAD) is not retained after authorisation.", 1,
                  "Do not store full magnetic-stripe, CVV/CVC, or PIN data under any circumstances after auth."),
                 ("PCI-3.3", "Primary account numbers (PAN) are rendered unreadable wherever stored.", 2,
-                 "Use strong one-way hashing, tokenisation, index tokens, or encryption to protect stored PANs."),
+                 "Use keyed cryptographic hashes (e.g., HMAC), tokenisation, index tokens, or strong encryption to protect stored PANs; unkeyed hashes alone are no longer sufficient."),
                 ("PCI-3.4", "Cryptographic keys protecting account data are secured and managed via formal key-management procedures.", 3,
                  "Implement split knowledge and dual control for key-encrypting keys; rotate keys at least annually."),
+                ("PCI-3.5", "Technical controls prevent copying or relocation of PAN when using remote-access technologies, except where explicitly authorised.", 2,
+                 "Block copy/paste and local drive mapping in remote-access sessions to CDE systems; document and approve any authorised exceptions per personnel."),
             ],
         },
         {
@@ -83,6 +87,8 @@ def seed_pci_dss(db: Session):
                  "Disable TLS 1.0 and 1.1, SSL, and early TLS; use TLS 1.2 or higher with strong cipher suites."),
                 ("PCI-4.2", "PANs are not transmitted via unprotected messaging technologies (email, chat, SMS).", 1,
                  "Prohibit unprotected PAN transmission; implement controls and user training to enforce this."),
+                ("PCI-4.3", "An inventory of trusted keys and certificates used to protect PAN in transit is maintained.", 2,
+                 "Track all TLS certificates and keys protecting PAN transmission; confirm certificates are valid, not expired, and not revoked."),
             ],
         },
         {
@@ -94,8 +100,10 @@ def seed_pci_dss(db: Session):
                  "Deploy anti-malware on all workstations, servers, and mobile devices in scope."),
                 ("PCI-5.2", "Anti-malware mechanisms are maintained and cannot be disabled by users.", 2,
                  "Ensure automatic definition updates and prevent user-level disabling of anti-malware."),
-                ("PCI-5.3", "Anti-phishing mechanisms are implemented (DMARC, DKIM, SPF).", 3,
-                 "Deploy email authentication standards and conduct phishing awareness training for all staff."),
+                ("PCI-5.3", "Anti-phishing mechanisms protect personnel against phishing attacks (DMARC, DKIM, SPF, link scrubbing).", 2,
+                 "Deploy email authentication standards and anti-phishing controls; mandatory since 31 March 2025."),
+                ("PCI-5.4", "Removable electronic media is scanned by anti-malware, or a continuous behavioural analysis solution is in place.", 3,
+                 "Configure automatic anti-malware scans of removable media on insertion, or deploy continuous behavioural analysis on in-scope systems."),
             ],
         },
         {
@@ -111,6 +119,10 @@ def seed_pci_dss(db: Session):
                  "Deploy a web application firewall in blocking mode in front of all public-facing applications."),
                 ("PCI-6.4", "Public-facing applications are reviewed for vulnerabilities at least annually.", 3,
                  "Conduct penetration testing or automated DAST scanning after significant changes and at least annually."),
+                ("PCI-6.5", "An inventory of bespoke and custom software, including third-party components, is maintained.", 2,
+                 "Maintain a software inventory (e.g., SBOM) covering all bespoke/custom software and embedded third-party libraries to support vulnerability management."),
+                ("PCI-6.6", "All payment page scripts executed in the consumer's browser are managed and their integrity assured.", 2,
+                 "Maintain an inventory of payment page scripts with written justification; authorise each script and verify integrity (e.g., SRI, CSP) to defend against e-skimming."),
             ],
         },
         {
@@ -124,6 +136,8 @@ def seed_pci_dss(db: Session):
                  "Formally recertify access rights semi-annually; revoke unnecessary access promptly."),
                 ("PCI-7.3", "All access to in-scope systems is assigned to an individual user account.", 2,
                  "Prohibit shared, generic, or anonymous accounts for interactive logins to CDE systems."),
+                ("PCI-7.4", "Application and system account access is limited to least privilege and reviewed periodically.", 2,
+                 "Review all application/system (service) account privileges at a frequency defined by a targeted risk analysis; remove privileges not required for the account's function."),
             ],
         },
         {
@@ -133,12 +147,16 @@ def seed_pci_dss(db: Session):
             "requirements": [
                 ("PCI-8.1", "All users are assigned a unique ID before access to in-scope systems is allowed.", 1,
                  "Prohibit shared, generic, or anonymous accounts; enforce unique user IDs across all CDE systems."),
-                ("PCI-8.2", "Multi-factor authentication is required for all non-console administrative access and remote access to the CDE.", 2,
-                 "Implement phishing-resistant MFA (hardware token or passkey); software OTP is minimum acceptable."),
-                ("PCI-8.3", "Passwords meet minimum complexity: 12+ characters with mixed case, numerals, and special characters.", 2,
-                 "Configure password policy enforcement at directory and application level."),
+                ("PCI-8.2", "Multi-factor authentication is required for ALL access into the CDE, plus all remote access originating outside the network.", 2,
+                 "Since 31 March 2025 MFA applies to every user type accessing the CDE, not just admins; implement phishing-resistant MFA (hardware token or passkey) where possible."),
+                ("PCI-8.3", "Passwords/passphrases are at least 12 characters and contain both numeric and alphabetic characters.", 2,
+                 "Enforce 12+ character minimum at directory and application level; change passwords at least every 12 months unless dynamic security-posture analysis is in place."),
                 ("PCI-8.4", "Inactive accounts are disabled within 90 days.", 3,
                  "Automate account suspension based on last login date; review quarterly."),
+                ("PCI-8.5", "MFA systems are resistant to replay attacks and cannot be bypassed except by documented, time-limited exception.", 3,
+                 "MFA must require at least two different factor types and succeed only when all factors pass; management must approve any bypass exceptions in writing."),
+                ("PCI-8.6", "Interactive use of system and application accounts is restricted, and their credentials are protected against misuse.", 3,
+                 "Prevent interactive login for service accounts except for exceptional, documented circumstances; do not hard-code credentials in scripts or config files."),
             ],
         },
         {
@@ -151,7 +169,7 @@ def seed_pci_dss(db: Session):
                 ("PCI-9.2", "Individual physical access is monitored and logged.", 2,
                  "Maintain access logs and review them for anomalies at least monthly."),
                 ("PCI-9.3", "Point-of-interaction (POI) devices are protected from tampering and substitution.", 2,
-                 "Maintain a device inventory; inspect POI devices periodically for signs of tampering."),
+                 "Maintain a device inventory; inspect POI devices at a frequency defined by a targeted risk analysis and train staff to detect tampering or substitution."),
             ],
         },
         {
@@ -165,8 +183,10 @@ def seed_pci_dss(db: Session):
                  "Implement centralised log management; archive logs for 12 months and keep 3 months online."),
                 ("PCI-10.3", "Audit logs are protected from modification or destruction.", 2,
                  "Use write-once storage or cryptographic integrity verification for audit logs."),
-                ("PCI-10.4", "Security alerts and anomalies are reviewed at least daily.", 3,
-                 "Deploy a SIEM or equivalent; configure automated alerts and require daily review by security staff."),
+                ("PCI-10.4", "Security alerts and anomalies are reviewed at least daily using automated mechanisms.", 3,
+                 "Automated log review (SIEM or equivalent) is mandatory since 31 March 2025; configure automated alerts and require daily review by security staff."),
+                ("PCI-10.5", "Failures of critical security control systems are detected, alerted, and responded to promptly.", 3,
+                 "Monitor NSCs, IDS/IPS, anti-malware, access controls, and logging for failure; restore the control, document the failure duration and cause, and address resulting risk."),
             ],
         },
         {
@@ -176,12 +196,14 @@ def seed_pci_dss(db: Session):
             "requirements": [
                 ("PCI-11.1", "Authorised and unauthorised wireless access points are identified at least quarterly.", 1,
                  "Conduct wireless scans quarterly; investigate and remediate any unauthorised access points."),
-                ("PCI-11.2", "Internal and external vulnerability scans are performed at least quarterly.", 2,
-                 "Use an Approved Scanning Vendor (ASV) for external scans; remediate critical/high findings before passing."),
+                ("PCI-11.2", "Internal and external vulnerability scans are performed at least quarterly; internal scans use authenticated scanning.", 2,
+                 "Use an Approved Scanning Vendor (ASV) for external scans; authenticated internal scanning is mandatory since 31 March 2025; manage non-critical vulnerabilities per a targeted risk analysis."),
                 ("PCI-11.3", "Penetration testing is conducted at least annually and after significant infrastructure changes.", 3,
                  "Test at network and application layers; remediate all exploitable findings and retest."),
                 ("PCI-11.4", "Intrusion detection/prevention systems are deployed at the CDE perimeter and on internal network segments.", 3,
                  "Configure IDS/IPS to alert on and block known attack signatures; review alerts daily."),
+                ("PCI-11.5", "A change- and tamper-detection mechanism is deployed on payment pages.", 2,
+                 "Alert personnel to unauthorised modification of HTTP headers and script contents of payment pages as received by the consumer browser; evaluate at least weekly or per targeted risk analysis."),
             ],
         },
         {
@@ -198,7 +220,11 @@ def seed_pci_dss(db: Session):
                 ("PCI-12.4", "Security awareness training is delivered to all personnel upon hire and at least annually.", 2,
                  "Include phishing simulations, social engineering awareness, and role-specific modules."),
                 ("PCI-12.5", "An incident response plan is documented and tested at least annually.", 3,
-                 "Define roles, responsibilities, and communication procedures; conduct tabletop or live exercises."),
+                 "Define roles, responsibilities, and communication procedures; include response to detection of unexpected PAN and to payment page tamper alerts."),
+                ("PCI-12.6", "Targeted risk analyses are documented for each requirement that allows flexible frequency or implementation.", 2,
+                 "Perform and review targeted risk analyses at least every 12 months for periodic controls (e.g., POI inspections, non-critical vulnerability remediation, log reviews)."),
+                ("PCI-12.7", "PCI DSS scope is documented and confirmed at least every 12 months and upon significant change.", 2,
+                 "Identify all locations of account data, in-scope systems, segmentation controls, and third-party connections; service providers must confirm scope every 6 months."),
             ],
         },
     ]
@@ -222,7 +248,7 @@ def seed_pci_dss(db: Session):
             ))
 
     db.commit()
-    print("PCI DSS v4.0 seeded successfully.")
+    print("PCI DSS v4.0.1 seeded successfully.")
     return framework.id
 
 
@@ -855,7 +881,7 @@ def seed_privacy_act_apps(db: Session):
 # ---------------------------------------------------------------------------
 
 FINANCIAL_FRAMEWORKS = [
-    ("PCI DSS",          "4.0",      seed_pci_dss),
+    ("PCI DSS",          "4.0.1",    seed_pci_dss),
     ("APRA CPS 234",     "2019",     seed_apra_cps234),
     ("APRA CPS 230",     "2024",     seed_apra_cps230),
     ("AUSTRAC AML/CTF",  "2006",     seed_austrac_amlctf),
